@@ -1,5 +1,4 @@
 import { createServerFn } from "@tanstack/react-start";
-import { requireUnlocked } from "./auth.server";
 
 type Tipo = "noticia" | "enquete" | "instagram" | "linkedin";
 
@@ -35,7 +34,7 @@ async function uaPoll(question: string, choices: string[]) {
 }
 
 export const listPendingNoticias = createServerFn({ method: "GET" }).handler(async () => {
-  await requireUnlocked();
+  await (await import("./auth.server")).requireUnlocked();
   const s = await supa();
   const { data, error } = await s
     .from("rascunhos")
@@ -48,7 +47,7 @@ export const listPendingNoticias = createServerFn({ method: "GET" }).handler(asy
 });
 
 export const listSentNoticias = createServerFn({ method: "GET" }).handler(async () => {
-  await requireUnlocked();
+  await (await import("./auth.server")).requireUnlocked();
   const s = await supa();
   const { data, error } = await s
     .from("rascunhos")
@@ -62,7 +61,7 @@ export const listSentNoticias = createServerFn({ method: "GET" }).handler(async 
 });
 
 export const listSent = createServerFn({ method: "GET" }).handler(async () => {
-  await requireUnlocked();
+  await (await import("./auth.server")).requireUnlocked();
   const s = await supa();
   const { data, error } = await s
     .from("rascunhos")
@@ -77,7 +76,7 @@ export const listSent = createServerFn({ method: "GET" }).handler(async () => {
 export const approveNoticia = createServerFn({ method: "POST" })
   .inputValidator((d: { id: string | number; mensagem: string }) => d)
   .handler(async ({ data }) => {
-    await requireUnlocked();
+    await (await import("./auth.server")).requireUnlocked();
     if (!data.mensagem?.trim()) throw new Error("Mensagem vazia");
     await uaText(data.mensagem);
     const s = await supa();
@@ -92,7 +91,7 @@ export const approveNoticia = createServerFn({ method: "POST" })
 export const discardNoticia = createServerFn({ method: "POST" })
   .inputValidator((d: { id: string | number }) => d)
   .handler(async ({ data }) => {
-    await requireUnlocked();
+    await (await import("./auth.server")).requireUnlocked();
     const s = await supa();
     const { error } = await s.from("rascunhos").update({ status: "descartado" }).eq("id", data.id);
     if (error) throw new Error(error.message);
@@ -102,7 +101,7 @@ export const discardNoticia = createServerFn({ method: "POST" })
 export const dispararEnquete = createServerFn({ method: "POST" })
   .inputValidator((d: { pergunta: string; opcoes: string[] }) => d)
   .handler(async ({ data }) => {
-    await requireUnlocked();
+    await (await import("./auth.server")).requireUnlocked();
     const pergunta = data.pergunta?.trim();
     const opcoes = (data.opcoes || []).map((o) => o.trim()).filter(Boolean);
     if (!pergunta) throw new Error("Pergunta obrigatória");
@@ -124,7 +123,7 @@ export const dispararEnquete = createServerFn({ method: "POST" })
 export const dispararPost = createServerFn({ method: "POST" })
   .inputValidator((d: { origem: "instagram" | "linkedin"; link: string; chamada: string }) => d)
   .handler(async ({ data }) => {
-    await requireUnlocked();
+    await (await import("./auth.server")).requireUnlocked();
     const link = data.link?.trim();
     const chamada = data.chamada?.trim();
     if (!link) throw new Error("Link obrigatório");
