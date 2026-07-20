@@ -6,7 +6,7 @@ export const sessionConfig = {
   cookie: {
     httpOnly: true,
     secure: true,
-    sameSite: "lax" as const,
+    sameSite: "none" as const,
     path: "/",
   },
 };
