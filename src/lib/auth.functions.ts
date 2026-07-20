@@ -1,7 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { useSession } from "@tanstack/react-start/server";
 import { createHash, timingSafeEqual } from "node:crypto";
-import { sessionConfig, type AppSession } from "./session";
 
 function passwordMatches(input: string, expected: string): boolean {
   const a = createHash("sha256").update(input, "utf8").digest();
@@ -9,14 +7,9 @@ function passwordMatches(input: string, expected: string): boolean {
   return timingSafeEqual(a, b);
 }
 
-export async function requireUnlocked() {
-  const session = await useSession<AppSession>(sessionConfig);
-  if (!session.data.unlocked) throw new Error("Não autorizado");
-  return session;
-}
-
 export const getAuthState = createServerFn({ method: "GET" }).handler(async () => {
-  const session = await useSession<AppSession>(sessionConfig);
+  const { getSession } = await import("./auth.server");
+  const session = await getSession();
   return { unlocked: Boolean(session.data.unlocked) };
 });
 
@@ -28,13 +21,15 @@ export const unlockApp = createServerFn({ method: "POST" })
     if (!data.password || !passwordMatches(data.password, expected)) {
       return { ok: false as const };
     }
-    const session = await useSession<AppSession>(sessionConfig);
+    const { getSession } = await import("./auth.server");
+    const session = await getSession();
     await session.update({ unlocked: true });
     return { ok: true as const };
   });
 
 export const lockApp = createServerFn({ method: "POST" }).handler(async () => {
-  const session = await useSession<AppSession>(sessionConfig);
+  const { getSession } = await import("./auth.server");
+  const session = await getSession();
   await session.clear();
   return { ok: true as const };
 });
