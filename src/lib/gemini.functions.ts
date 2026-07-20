@@ -1,10 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
-import { requireUnlocked } from "./auth.functions";
 
 export const gerarEnquete = createServerFn({ method: "POST" })
   .inputValidator((d: { noticia: string }) => d)
   .handler(async ({ data }) => {
-    await requireUnlocked();
+    await (await import("./auth.server")).requireUnlocked();
     const key = process.env.GEMINI_API_KEY;
     if (!key) throw new Error("GEMINI_API_KEY não configurada");
     const noticia = data.noticia?.trim();
