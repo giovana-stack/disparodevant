@@ -46,8 +46,8 @@ ${noticia}`;
     }
     const pergunta = (parsed.pergunta || "").toString().trim();
     const opcoes = Array.isArray(parsed.opcoes)
-      ? parsed.opcoes.map((o) => String(o).trim()).filter(Boolean).slice(0, 3)
+      ? parsed.opcoes.map((o) => String(o).trim()).filter(Boolean).slice(0, 4)
       : [];
-    if (!pergunta || opcoes.length < 2) throw new Error("Resposta do Gemini inválida");
+    if (!pergunta || opcoes.length < 3) throw new Error("Resposta do Gemini inválida");
     return { pergunta, opcoes };
   });
