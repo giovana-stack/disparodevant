@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { requireUnlocked } from "./auth.functions";
+import { requireUnlocked } from "./auth.server";
 
 export const gerarEnquete = createServerFn({ method: "POST" })
   .inputValidator((d: { noticia: string }) => d)
