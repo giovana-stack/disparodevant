@@ -44,6 +44,7 @@ import {
   discardNoticia,
   dispararEnquete,
   dispararPost,
+  buscarNovasNoticias,
 } from "@/lib/rascunhos.functions";
 import { gerarEnquete } from "@/lib/gemini.functions";
 
