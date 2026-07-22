@@ -33,6 +33,22 @@ async function uaPoll(question: string, choices: string[]) {
   return r.json().catch(() => ({}));
 }
 
+export const buscarNovasNoticias = createServerFn({ method: "POST" }).handler(async () => {
+  await (await import("./auth.server")).requireUnlocked();
+  const url = process.env.FETCH_NOTICIAS_URL;
+  if (!url) throw new Error("FETCH_NOTICIAS_URL não configurada");
+  const ctrl = new AbortController();
+  const timeout = setTimeout(() => ctrl.abort(), 150000);
+  try {
+    const r = await fetch(url, { method: "POST", redirect: "follow", signal: ctrl.signal });
+    if (!r.ok) throw new Error(`Falha ao buscar notícias: ${r.status}`);
+    try { await r.text(); } catch { /* ignore */ }
+    return { ok: true as const };
+  } finally {
+    clearTimeout(timeout);
+  }
+});
+
 export const listPendingNoticias = createServerFn({ method: "GET" }).handler(async () => {
   await (await import("./auth.server")).requireUnlocked();
   const s = await supa();

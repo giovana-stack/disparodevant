@@ -16,6 +16,7 @@ import {
   Plus,
   X,
   MessageCircle,
+  RefreshCw,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -43,6 +44,7 @@ import {
   discardNoticia,
   dispararEnquete,
   dispararPost,
+  buscarNovasNoticias,
 } from "@/lib/rascunhos.functions";
 import { gerarEnquete } from "@/lib/gemini.functions";
 
@@ -184,35 +186,72 @@ function NoticiasTab() {
   const listFn = useServerFn(listPendingNoticias);
   const approveFn = useServerFn(approveNoticia);
   const discardFn = useServerFn(discardNoticia);
+  const buscarFn = useServerFn(buscarNovasNoticias);
+  const [buscando, setBuscando] = useState(false);
 
   const q = useQuery({ queryKey: ["noticias-pendentes"], queryFn: () => listFn() });
 
-  if (q.isLoading) return <Loading />;
-  if (q.error) return <ErrorBox error={q.error} />;
+  async function buscar() {
+    setBuscando(true);
+    try {
+      await buscarFn();
+      toast.success("Notícias atualizadas!");
+      await qc.invalidateQueries({ queryKey: ["noticias-pendentes"] });
+    } catch (e) {
+      const msg = (e as Error)?.message || "";
+      toast.error(
+        msg.includes("abort") || msg.includes("timeout")
+          ? "A busca demorou demais. Tente novamente."
+          : "Não foi possível buscar. Tente novamente.",
+      );
+    } finally {
+      setBuscando(false);
+    }
+  }
+
+  const buscarBtn = (
+    <Button onClick={buscar} disabled={buscando} className="w-full">
+      {buscando ? (
+        <>
+          <Loader2 className="w-4 h-4 mr-1 animate-spin" /> Buscando...
+        </>
+      ) : (
+        <>
+          <RefreshCw className="w-4 h-4 mr-1" /> Buscar novas notícias
+        </>
+      )}
+    </Button>
+  );
+
+  if (q.isLoading) return <div className="space-y-3">{buscarBtn}<Loading /></div>;
+  if (q.error) return <div className="space-y-3">{buscarBtn}<ErrorBox error={q.error} /></div>;
   const items = q.data ?? [];
-  if (items.length === 0)
-    return <EmptyBox icon={<Newspaper className="w-6 h-6" />} text="Nenhuma notícia pendente." />;
 
   return (
     <div className="space-y-3">
-      {items.map((r) => (
-        <NoticiaCard
-          key={String(r.id)}
-          rascunho={r}
-          onApprove={async (msg) => {
-            await approveFn({ data: { id: r.id, mensagem: msg } });
-            toast.success("Disparado!");
-            qc.invalidateQueries({ queryKey: ["noticias-pendentes"] });
-            qc.invalidateQueries({ queryKey: ["noticias-enviadas"] });
-            qc.invalidateQueries({ queryKey: ["enviados"] });
-          }}
-          onDiscard={async () => {
-            await discardFn({ data: { id: r.id } });
-            toast.success("Descartado");
-            qc.invalidateQueries({ queryKey: ["noticias-pendentes"] });
-          }}
-        />
-      ))}
+      {buscarBtn}
+      {items.length === 0 ? (
+        <EmptyBox icon={<Newspaper className="w-6 h-6" />} text="Nenhuma notícia pendente." />
+      ) : (
+        items.map((r) => (
+          <NoticiaCard
+            key={String(r.id)}
+            rascunho={r}
+            onApprove={async (msg) => {
+              await approveFn({ data: { id: r.id, mensagem: msg } });
+              toast.success("Disparado!");
+              qc.invalidateQueries({ queryKey: ["noticias-pendentes"] });
+              qc.invalidateQueries({ queryKey: ["noticias-enviadas"] });
+              qc.invalidateQueries({ queryKey: ["enviados"] });
+            }}
+            onDiscard={async () => {
+              await discardFn({ data: { id: r.id } });
+              toast.success("Descartado");
+              qc.invalidateQueries({ queryKey: ["noticias-pendentes"] });
+            }}
+          />
+        ))
+      )}
     </div>
   );
 }
