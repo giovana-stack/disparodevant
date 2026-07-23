@@ -1,5 +1,52 @@
 import { createServerFn } from "@tanstack/react-start";
 
+async function callGemini(prompt: string, temperature = 0.8): Promise<string> {
+  const key = process.env.GEMINI_API_KEY;
+  if (!key) throw new Error("GEMINI_API_KEY não configurada");
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-lite-latest:generateContent?key=${encodeURIComponent(key)}`;
+  const r = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: { temperature },
+    }),
+  });
+  if (!r.ok) throw new Error(`Gemini falhou: ${r.status} ${await r.text()}`);
+  const j = (await r.json()) as { candidates?: { content?: { parts?: { text?: string }[] } }[] };
+  return j.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+}
+
+export const gerarChamadaPost = createServerFn({ method: "POST" })
+  .inputValidator((d: { origem: "instagram" | "linkedin"; texto: string }) => d)
+  .handler(async ({ data }) => {
+    await (await import("./auth.server")).requireUnlocked();
+    const texto = data.texto?.trim();
+    if (!texto) throw new Error("Cole o texto do post");
+    const origemNome = data.origem === "instagram" ? "Instagram" : "LinkedIn";
+
+    const prompt = `Você é redator da Devant Soluções Tributárias, uma consultoria tributária que fala com donos de empresa de forma clara e acessível. Leia o post abaixo (do ${origemNome}) e escreva uma chamada curta para o WhatsApp convidando a pessoa a ver o post completo no ${origemNome}.
+
+Regras obrigatórias:
+1. Português brasileiro natural e simples, tom de conversa, sem juridiquês.
+2. Entre 2 e 4 linhas curtas.
+3. Pode usar poucos emojis (no máximo 2), sem exagero.
+4. Desperte curiosidade destacando o ponto mais interessante do post, sem entregar tudo.
+5. NÃO inclua link nenhum — o link é adicionado depois automaticamente.
+6. Varie a forma de abrir, nada de fórmulas repetidas ("Você sabia que...", "Confira...").
+7. Termine convidando a ver o post completo no ${origemNome}.
+
+Responda APENAS com o texto da chamada, sem aspas, sem markdown, sem explicação.
+
+Post:
+${texto}`;
+
+    const raw = (await callGemini(prompt, 0.9)).trim();
+    const chamada = raw.replace(/^["'`]+|["'`]+$/g, "").trim();
+    if (!chamada) throw new Error("Resposta do Gemini vazia");
+    return { chamada };
+  });
+
 export const gerarEnquete = createServerFn({ method: "POST" })
   .inputValidator((d: { noticia: string }) => d)
   .handler(async ({ data }) => {
