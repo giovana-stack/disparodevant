@@ -46,7 +46,7 @@ import {
   dispararPost,
   buscarNovasNoticias,
 } from "@/lib/rascunhos.functions";
-import { gerarEnquete } from "@/lib/gemini.functions";
+import { gerarEnquete, gerarChamadaPost } from "@/lib/gemini.functions";
 
 export const Route = createFileRoute("/")({
   loader: () => getAuthState(),
