@@ -46,7 +46,7 @@ import {
   dispararPost,
   buscarNovasNoticias,
 } from "@/lib/rascunhos.functions";
-import { gerarEnquete } from "@/lib/gemini.functions";
+import { gerarEnquete, gerarChamadaPost } from "@/lib/gemini.functions";
 
 export const Route = createFileRoute("/")({
   loader: () => getAuthState(),
@@ -497,9 +497,20 @@ function EnqueteTab() {
 function PostTab() {
   const qc = useQueryClient();
   const dispararFn = useServerFn(dispararPost);
+  const gerarFn = useServerFn(gerarChamadaPost);
   const [origem, setOrigem] = useState<"instagram" | "linkedin">("instagram");
   const [link, setLink] = useState("");
+  const [textoPost, setTextoPost] = useState("");
   const [chamada, setChamada] = useState("");
+
+  const gerarMut = useMutation({
+    mutationFn: () => gerarFn({ data: { origem, texto: textoPost } }),
+    onSuccess: (r) => {
+      setChamada(r.chamada);
+      toast.success("Chamada gerada!");
+    },
+    onError: (e) => toast.error((e as Error).message),
+  });
 
   const mut = useMutation({
     mutationFn: () => dispararFn({ data: { origem, link, chamada } }),
@@ -507,6 +518,7 @@ function PostTab() {
       toast.success("Post disparado!");
       setLink("");
       setChamada("");
+      setTextoPost("");
       qc.invalidateQueries({ queryKey: ["enviados"] });
     },
     onError: (e) => toast.error((e as Error).message),
@@ -539,6 +551,29 @@ function PostTab() {
             onChange={(e) => setLink(e.target.value)}
             placeholder="https://..."
           />
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="textoPost">Cole aqui o texto do post</Label>
+          <Textarea
+            id="textoPost"
+            rows={6}
+            value={textoPost}
+            onChange={(e) => setTextoPost(e.target.value)}
+            placeholder="Cole o conteúdo/legenda completa do post..."
+          />
+          <Button
+            type="button"
+            variant="secondary"
+            className="w-full"
+            disabled={gerarMut.isPending || !textoPost.trim()}
+            onClick={() => gerarMut.mutate()}
+          >
+            {gerarMut.isPending ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              "Gerar chamada com IA"
+            )}
+          </Button>
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="chamada">Texto de chamada</Label>
