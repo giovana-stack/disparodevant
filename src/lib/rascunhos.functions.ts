@@ -145,7 +145,7 @@ export const dispararPost = createServerFn({ method: "POST" })
     if (!link) throw new Error("Link obrigatório");
     if (!chamada) throw new Error("Texto de chamada obrigatório");
     if (data.origem !== "instagram" && data.origem !== "linkedin") throw new Error("Origem inválida");
-    const texto = `${chamada}\n\n👉 Leia mais: ${link}`;
+    const texto = chamada.includes(link) ? chamada : `${chamada}\n\n👉 Leia mais: ${link}`;
     await uaText(texto);
     const s = await supa();
     const tipo: Tipo = data.origem;

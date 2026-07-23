@@ -504,7 +504,7 @@ function PostTab() {
   const [chamada, setChamada] = useState("");
 
   const gerarMut = useMutation({
-    mutationFn: () => gerarFn({ data: { origem, texto: textoPost } }),
+    mutationFn: () => gerarFn({ data: { origem, texto: textoPost, link } }),
     onSuccess: (r) => {
       setChamada(r.chamada);
       toast.success("Chamada gerada!");

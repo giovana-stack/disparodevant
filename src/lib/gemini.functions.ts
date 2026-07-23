@@ -18,11 +18,12 @@ async function callGemini(prompt: string, temperature = 0.8): Promise<string> {
 }
 
 export const gerarChamadaPost = createServerFn({ method: "POST" })
-  .inputValidator((d: { origem: "instagram" | "linkedin"; texto: string }) => d)
+  .inputValidator((d: { origem: "instagram" | "linkedin"; texto: string; link?: string }) => d)
   .handler(async ({ data }) => {
     await (await import("./auth.server")).requireUnlocked();
     const texto = data.texto?.trim();
     if (!texto) throw new Error("Cole o texto do post");
+    const link = (data.link || "").trim();
     const origemNome = data.origem === "instagram" ? "Instagram" : "LinkedIn";
 
     const prompt = `Você é redator da Devant Soluções Tributárias, uma consultoria tributária que fala com donos de empresa de forma clara e acessível. Leia o post abaixo (do ${origemNome}) e escreva uma chamada curta para o WhatsApp convidando a pessoa a ver o post completo no ${origemNome}.
@@ -42,8 +43,9 @@ Post:
 ${texto}`;
 
     const raw = (await callGemini(prompt, 0.9)).trim();
-    const chamada = raw.replace(/^["'`]+|["'`]+$/g, "").trim();
+    let chamada = raw.replace(/^["'`]+|["'`]+$/g, "").trim();
     if (!chamada) throw new Error("Resposta do Gemini vazia");
+    if (link) chamada = `${chamada}\n\n👉 Leia mais: ${link}`;
     return { chamada };
   });
 
