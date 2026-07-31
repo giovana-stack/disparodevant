@@ -609,12 +609,14 @@ const TIPO_LABEL: Record<string, string> = {
   enquete: "Enquete",
   instagram: "Instagram",
   linkedin: "LinkedIn",
+  post_ig: "Post Instagram",
 };
 const TIPO_CLASS: Record<string, string> = {
   noticia: "bg-[var(--tipo-noticia)] text-white",
   enquete: "bg-[var(--tipo-enquete)] text-white",
   instagram: "bg-[var(--tipo-instagram)] text-white",
   linkedin: "bg-[var(--tipo-linkedin)] text-white",
+  post_ig: "bg-[var(--tipo-post-ig)] text-white",
 };
 
 function ymd(d: string | Date) {
@@ -626,20 +628,38 @@ function ymd(d: string | Date) {
 
 function CalendarioTab() {
   const listFn = useServerFn(listSent);
+  const listIgFn = useServerFn(listPostagensInstagram);
   const q = useQuery({ queryKey: ["enviados"], queryFn: () => listFn() });
+  const igQ = useQuery({ queryKey: ["postagens-instagram"], queryFn: () => listIgFn() });
   const [selected, setSelected] = useState<Date | undefined>(new Date());
 
   const byDay = useMemo(() => {
     const m = new Map<string, Array<{ id: string; tipo: string; titulo: string | null; mensagem: string | null }>>();
+    const push = (k: string, item: { id: string; tipo: string; titulo: string | null; mensagem: string | null }) => {
+      const arr = m.get(k) ?? [];
+      arr.push(item);
+      m.set(k, arr);
+    };
     for (const r of q.data ?? []) {
       if (!r.enviado_em) continue;
-      const k = ymd(r.enviado_em);
-      const arr = m.get(k) ?? [];
-      arr.push({ id: String(r.id), tipo: r.tipo, titulo: r.titulo, mensagem: r.mensagem });
-      m.set(k, arr);
+      push(ymd(r.enviado_em), {
+        id: String(r.id),
+        tipo: r.tipo,
+        titulo: r.titulo,
+        mensagem: r.mensagem,
+      });
+    }
+    for (const p of igQ.data ?? []) {
+      if (!p.agendado_para) continue;
+      push(ymd(p.agendado_para), {
+        id: `ig-${p.id}`,
+        tipo: "post_ig",
+        titulo: p.titulo,
+        mensagem: p.legenda,
+      });
     }
     return m;
-  }, [q.data]);
+  }, [q.data, igQ.data]);
 
   const modifiers = useMemo(() => {
     const mods: Record<string, Date[]> = {
@@ -647,6 +667,7 @@ function CalendarioTab() {
       enquete: [],
       instagram: [],
       linkedin: [],
+      post_ig: [],
     };
     for (const [k, arr] of byDay) {
       const [y, mo, d] = k.split("-").map(Number);
@@ -656,6 +677,7 @@ function CalendarioTab() {
     }
     return mods;
   }, [byDay]);
+
 
   const dia = selected ? byDay.get(ymd(selected)) ?? [] : [];
 
