@@ -67,10 +67,10 @@ export const listSentNoticias = createServerFn({ method: "GET" }).handler(async 
   const s = await supa();
   const { data, error } = await s
     .from("rascunhos")
-    .select("id, titulo, mensagem, enviado_em")
-    .eq("status", "enviado")
+    .select("id, titulo, mensagem, status, criado_em, enviado_em")
+    .in("status", ["pendente", "enviado"])
     .eq("tipo", "noticia")
-    .order("enviado_em", { ascending: false })
+    .order("criado_em", { ascending: false })
     .limit(100);
   if (error) throw new Error(error.message);
   return data ?? [];
