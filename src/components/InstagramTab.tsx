@@ -174,7 +174,30 @@ export function InstagramTab() {
             </Select>
           </div>
 
-          {selecionada && (
+          <div className="relative py-1">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center">
+              <span className="bg-card px-2 text-xs text-muted-foreground">ou crie manualmente</span>
+            </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="ig-titulo-manual">Título da notícia</Label>
+            <Input
+              id="ig-titulo-manual"
+              value={manual ? titulo : ""}
+              placeholder="Digite o título do post..."
+              onChange={(e) => {
+                setManual(true);
+                setSelecionada("");
+                setTitulo(e.target.value);
+              }}
+            />
+          </div>
+
+          {(selecionada || (manual && titulo.trim())) && (
             <div className="space-y-1.5">
               <Label htmlFor="ig-img">Envie a imagem de fundo</Label>
               <Input id="ig-img" type="file" accept="image/*" onChange={onFile} />
@@ -183,7 +206,7 @@ export function InstagramTab() {
         </CardContent>
       </Card>
 
-      {selecionada && imagem && (
+      {(selecionada || (manual && titulo.trim())) && imagem && (
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-base">Prévia da arte (clique no título para editar)</CardTitle>
