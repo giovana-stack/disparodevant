@@ -61,6 +61,7 @@ export function InstagramTab() {
 
   function escolherNoticia(id: string) {
     setSelecionada(id);
+    setManual(false);
     const n = (noticiasQ.data ?? []).find((x) => String(x.id) === id);
     setTitulo(n?.titulo || "");
     setImagemUrl(null);
