@@ -281,25 +281,13 @@ export function InstagramTab() {
                   />
                   <div style={{ width: 150, height: 2, background: "#C4A35A" }} />
                 </div>
-                {/* Camada 9: rodapé */}
+                {/* Camada 9-10: logo no rodapé (sem barra de fundo) */}
                 <div
                   style={{
                     position: "absolute",
                     left: 0,
                     right: 0,
-                    bottom: 6,
-                    height: 80,
-                    background: VERDE_RODAPE,
-                  }}
-                />
-                {/* Camada 10: logo no rodapé */}
-                <div
-                  style={{
-                    position: "absolute",
-                    left: 0,
-                    right: 0,
-                    bottom: 6,
-                    height: 80,
+                    bottom: 24,
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
