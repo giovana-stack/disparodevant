@@ -142,7 +142,7 @@ export function InstagramTab() {
       backgroundColor: null,
       scale: 2,
       useCORS: true,
-      onclone: (_doc, el) => sanitizeOklch(el as HTMLElement),
+      onclone: (doc, el) => sanitizeOklch(doc, el as HTMLElement),
     });
     const dataUrl = canvas.toDataURL("image/png");
     const r = await uploadFn({ data: { dataUrl } });
