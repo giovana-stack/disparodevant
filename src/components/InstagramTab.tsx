@@ -181,11 +181,14 @@ export function InstagramTab() {
                   flex: "0 0 auto",
                   overflow: "hidden",
                   fontFamily: "Arial, Helvetica, sans-serif",
+                  background: "#0F172A",
                 }}
               >
+                {/* Camada 1: fundo */}
                 <img
                   src={imagem}
                   alt=""
+                  crossOrigin="anonymous"
                   style={{
                     position: "absolute",
                     inset: 0,
@@ -194,9 +197,13 @@ export function InstagramTab() {
                     objectFit: "cover",
                   }}
                 />
+                {/* Camada 2: overlay */}
+                <div style={{ position: "absolute", inset: 0, background: VERDE_ESCURO }} />
+                {/* Camada 3: faixa de acento topo */}
                 <div
-                  style={{ position: "absolute", inset: 0, background: VERDE_ESCURO }}
+                  style={{ position: "absolute", top: 0, left: 0, right: 0, height: 6, background: VERDE_TAG }}
                 />
+                {/* Camada 4: tag NOTÍCIA */}
                 <div
                   style={{
                     position: "absolute",
@@ -221,13 +228,14 @@ export function InstagramTab() {
                     NOTÍCIA
                   </span>
                 </div>
+                {/* Camada 5: título editável */}
                 <div
                   style={{
                     position: "absolute",
                     top: 120,
-                    bottom: 110,
                     left: 44,
                     right: 44,
+                    bottom: 320,
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -251,24 +259,63 @@ export function InstagramTab() {
                     {titulo}
                   </div>
                 </div>
+                {/* Camadas 6-8: linhas decorativas + isotipo */}
+                <div
+                  style={{
+                    position: "absolute",
+                    top: 380,
+                    left: 0,
+                    right: 0,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 16,
+                  }}
+                >
+                  <div style={{ width: 150, height: 2, background: "#C4A35A" }} />
+                  <img
+                    src="https://adgcnounhstuqwpvfpgp.supabase.co/storage/v1/object/public/imagens/isotipo-branco.png"
+                    alt=""
+                    crossOrigin="anonymous"
+                    style={{ width: 50, height: 50, opacity: 0.9, objectFit: "contain" }}
+                  />
+                  <div style={{ width: 150, height: 2, background: "#C4A35A" }} />
+                </div>
+                {/* Camada 9: rodapé */}
                 <div
                   style={{
                     position: "absolute",
                     left: 0,
                     right: 0,
-                    bottom: 0,
-                    height: 70,
+                    bottom: 6,
+                    height: 80,
                     background: VERDE_RODAPE,
-                    color: CREME,
+                  }}
+                />
+                {/* Camada 10: logo no rodapé */}
+                <div
+                  style={{
+                    position: "absolute",
+                    left: 0,
+                    right: 0,
+                    bottom: 6,
+                    height: 80,
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    fontSize: 20,
-                    letterSpacing: 1,
                   }}
                 >
-                  DEVANT | Soluções Tributárias
+                  <img
+                    src="https://adgcnounhstuqwpvfpgp.supabase.co/storage/v1/object/public/imagens/devant.png"
+                    alt=""
+                    crossOrigin="anonymous"
+                    style={{ width: 180, opacity: 0.95, objectFit: "contain" }}
+                  />
                 </div>
+                {/* Camada 11: faixa de acento base */}
+                <div
+                  style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 6, background: VERDE_TAG }}
+                />
               </div>
             </div>
 
