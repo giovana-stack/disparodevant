@@ -59,7 +59,7 @@ export const salvarPostagemInstagram = createServerFn({ method: "POST" })
   });
 
 export const enviarWebhookMake = createServerFn({ method: "POST" })
-  .inputValidator((d: { titulo: string; imagem_fundo_url: string; legenda: string }) => d)
+  .inputValidator((d: { titulo: string; photo_url: string; caption: string }) => d)
   .handler(async ({ data }) => {
     await (await import("./auth.server")).requireUnlocked();
     const url = process.env.MAKE_WEBHOOK;
@@ -69,8 +69,8 @@ export const enviarWebhookMake = createServerFn({ method: "POST" })
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         titulo: data.titulo,
-        imagem_fundo_url: data.imagem_fundo_url,
-        legenda: data.legenda,
+        photo_url: data.photo_url,
+        caption: data.caption,
       }),
       redirect: "follow",
     });
