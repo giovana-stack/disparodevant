@@ -228,58 +228,68 @@ export function InstagramTab() {
                     NOTÍCIA
                   </span>
                 </div>
-                {/* Camada 5: título editável */}
+                {/* Camadas 5-8: bloco central (título + linhas + isotipo) */}
                 <div
                   style={{
                     position: "absolute",
-                    top: 120,
-                    left: 44,
-                    right: 44,
-                    bottom: 320,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <div
-                    contentEditable
-                    suppressContentEditableWarning
-                    onBlur={(e) => setTitulo(e.currentTarget.innerText)}
-                    style={{
-                      color: "#FFFFFF",
-                      fontWeight: 700,
-                      fontSize: 40,
-                      lineHeight: 1.2,
-                      textAlign: "center",
-                      textShadow: "0 2px 12px rgba(0,0,0,0.55)",
-                      outline: "none",
-                      width: "100%",
-                    }}
-                  >
-                    {titulo}
-                  </div>
-                </div>
-                {/* Camadas 6-8: linhas decorativas + isotipo */}
-                <div
-                  style={{
-                    position: "absolute",
-                    top: 380,
+                    top: 90,
                     left: 0,
                     right: 0,
+                    bottom: 100,
                     display: "flex",
+                    flexDirection: "column",
                     alignItems: "center",
                     justifyContent: "center",
-                    gap: 16,
+                    gap: 28,
                   }}
                 >
-                  <div style={{ width: 150, height: 2, background: "#C4A35A" }} />
-                  <img
-                    src="https://adgcnounhstuqwpvfpgp.supabase.co/storage/v1/object/public/imagens/isotipo-branco.png"
-                    alt=""
-                    crossOrigin="anonymous"
-                    style={{ width: 50, height: 50, opacity: 0.9, objectFit: "contain" }}
-                  />
-                  <div style={{ width: 150, height: 2, background: "#C4A35A" }} />
+                  {/* Camada 5: título editável */}
+                  <div
+                    style={{
+                      width: "100%",
+                      paddingLeft: 44,
+                      paddingRight: 44,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <div
+                      contentEditable
+                      suppressContentEditableWarning
+                      onBlur={(e) => setTitulo(e.currentTarget.innerText)}
+                      style={{
+                        color: "#FFFFFF",
+                        fontWeight: 700,
+                        fontSize: 40,
+                        lineHeight: 1.2,
+                        textAlign: "center",
+                        textShadow: "0 2px 12px rgba(0,0,0,0.55)",
+                        outline: "none",
+                        width: "100%",
+                      }}
+                    >
+                      {titulo}
+                    </div>
+                  </div>
+                  {/* Camadas 6-8: linhas decorativas + isotipo */}
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: 16,
+                    }}
+                  >
+                    <div style={{ width: 150, height: 2, background: "#C4A35A" }} />
+                    <img
+                      src="https://adgcnounhstuqwpvfpgp.supabase.co/storage/v1/object/public/imagens/isotipo-branco.png"
+                      alt=""
+                      crossOrigin="anonymous"
+                      style={{ width: 50, height: 50, opacity: 0.9, objectFit: "contain" }}
+                    />
+                    <div style={{ width: 150, height: 2, background: "#C4A35A" }} />
+                  </div>
                 </div>
                 {/* Camada 9-10: logo no rodapé (sem barra de fundo) */}
                 <div
