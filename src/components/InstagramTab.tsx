@@ -89,17 +89,10 @@ export function InstagramTab() {
     }
   }
 
-  async function gerarImagemUrl(): Promise<string> {
-    if (!previewRef.current) throw new Error("Prévia indisponível");
-    const html2canvas = (await import("html2canvas")).default;
-    const canvas = await html2canvas(previewRef.current, {
-      backgroundColor: null,
-      scale: 2,
-      useCORS: true,
-      onclone: (doc, el) => sanitizeOklch(doc, el as HTMLElement),
-    });
-    const dataUrl = canvas.toDataURL("image/png");
-    const r = await uploadFn({ data: { dataUrl } });
+  async function subirImagemFundo(): Promise<string> {
+    if (imagemUrl) return imagemUrl;
+    if (!imagem) throw new Error("Envie a imagem de fundo");
+    const r = await uploadFn({ data: { dataUrl: imagem } });
     setImagemUrl(r.url);
     return r.url;
   }
@@ -121,22 +114,22 @@ export function InstagramTab() {
     }
     setSalvando(modo);
     try {
-      const url = await gerarImagemUrl();
-      await salvarFn({
-        data: {
-          titulo,
-          imagem_url: url,
-          legenda,
-          agendado_para:
-            modo === "agora" ? new Date().toISOString() : new Date(agendadoPara).toISOString(),
-          status: modo === "agora" ? "publicar_agora" : "agendado",
-          rascunho_id: noticia?.id ?? null,
-        },
-      });
+      const url = await subirImagemFundo();
       if (modo === "agora") {
-        await webhookFn({ data: { photo_url: url, caption: legenda } });
+        await webhookFn({ data: { titulo, imagem_fundo_url: url, legenda } });
+      } else {
+        await salvarFn({
+          data: {
+            titulo,
+            imagem_url: url,
+            legenda,
+            agendado_para: new Date(agendadoPara).toISOString(),
+            status: "agendado",
+            rascunho_id: noticia?.id ?? null,
+          },
+        });
       }
-      toast.success(modo === "agora" ? "Publicado com sucesso!" : "Postagem agendada!");
+      toast.success(modo === "agora" ? "Enviado com sucesso!" : "Postagem agendada!");
       qc.invalidateQueries({ queryKey: ["postagens-instagram"] });
       limpar();
     } catch (e) {
@@ -145,6 +138,7 @@ export function InstagramTab() {
       setSalvando(null);
     }
   }
+
 
 
   return (
