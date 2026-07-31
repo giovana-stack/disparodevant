@@ -159,3 +159,16 @@ export const dispararPost = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true as const };
   });
+
+export const marcarRascunhoEnviado = createServerFn({ method: "POST" })
+  .inputValidator((d: { id: string | number }) => d)
+  .handler(async ({ data }) => {
+    await (await import("./auth.server")).requireUnlocked();
+    const s = await supa();
+    const { error } = await s
+      .from("rascunhos")
+      .update({ status: "enviado", enviado_em: new Date().toISOString() })
+      .eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true as const };
+  });
