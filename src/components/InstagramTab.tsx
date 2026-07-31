@@ -28,54 +28,8 @@ import {
 const VERDE_ESCURO = "rgba(25, 42, 37, 0.75)";
 const VERDE_TAG = "#059A8E";
 
-/**
- * html2canvas não entende oklch/color-mix (padrão do Tailwind v4).
- * Neutralizamos qualquer cor herdada do tema dentro da prévia: no clone,
- * uma folha de estilo zera todas as cores e os estilos inline (hex/rgba)
- * da prévia prevalecem por especificidade.
- */
-const PREVIEW_ID = "ig-preview";
 
-const SAFE_COLOR_CSS = `
-#${PREVIEW_ID}, #${PREVIEW_ID} * {
-  color: #FFFFFF !important;
-  background-color: rgba(0, 0, 0, 0) !important;
-  background-image: none !important;
-  border-color: rgba(0, 0, 0, 0) !important;
-  outline-color: rgba(0, 0, 0, 0) !important;
-  text-decoration-color: #FFFFFF !important;
-  caret-color: rgba(0, 0, 0, 0) !important;
-  box-shadow: none !important;
-  text-shadow: none !important;
-  fill: #FFFFFF !important;
-  stroke: rgba(0, 0, 0, 0) !important;
-}
-`;
 
-/** Reaplica os estilos inline seguros (hex/rgba) por cima do reset !important. */
-function forceInlineColors(root: HTMLElement) {
-  const els = [root, ...Array.from(root.querySelectorAll<HTMLElement>("*"))];
-  for (const el of els) {
-    const s = el.getAttribute("style") || "";
-    if (!s) continue;
-    el.setAttribute(
-      "style",
-      s
-        .split(";")
-        .filter(Boolean)
-        .map((decl) => (decl.includes("!important") ? decl : `${decl} !important`))
-        .join(";"),
-    );
-  }
-}
-
-function sanitizeOklch(doc: Document, root: HTMLElement) {
-  const style = doc.createElement("style");
-  style.textContent = SAFE_COLOR_CSS;
-  (doc.head || doc.documentElement).appendChild(style);
-  root.id = PREVIEW_ID;
-  forceInlineColors(root);
-}
 
 
 export function InstagramTab() {
@@ -135,17 +89,10 @@ export function InstagramTab() {
     }
   }
 
-  async function gerarImagemUrl(): Promise<string> {
-    if (!previewRef.current) throw new Error("Prévia indisponível");
-    const html2canvas = (await import("html2canvas")).default;
-    const canvas = await html2canvas(previewRef.current, {
-      backgroundColor: null,
-      scale: 2,
-      useCORS: true,
-      onclone: (doc, el) => sanitizeOklch(doc, el as HTMLElement),
-    });
-    const dataUrl = canvas.toDataURL("image/png");
-    const r = await uploadFn({ data: { dataUrl } });
+  async function subirImagemFundo(): Promise<string> {
+    if (imagemUrl) return imagemUrl;
+    if (!imagem) throw new Error("Envie a imagem de fundo");
+    const r = await uploadFn({ data: { dataUrl: imagem } });
     setImagemUrl(r.url);
     return r.url;
   }
@@ -167,22 +114,22 @@ export function InstagramTab() {
     }
     setSalvando(modo);
     try {
-      const url = await gerarImagemUrl();
-      await salvarFn({
-        data: {
-          titulo,
-          imagem_url: url,
-          legenda,
-          agendado_para:
-            modo === "agora" ? new Date().toISOString() : new Date(agendadoPara).toISOString(),
-          status: modo === "agora" ? "publicar_agora" : "agendado",
-          rascunho_id: noticia?.id ?? null,
-        },
-      });
+      const url = await subirImagemFundo();
       if (modo === "agora") {
-        await webhookFn({ data: { photo_url: url, caption: legenda } });
+        await webhookFn({ data: { titulo, imagem_fundo_url: url, legenda } });
+      } else {
+        await salvarFn({
+          data: {
+            titulo,
+            imagem_url: url,
+            legenda,
+            agendado_para: new Date(agendadoPara).toISOString(),
+            status: "agendado",
+            rascunho_id: noticia?.id ?? null,
+          },
+        });
       }
-      toast.success(modo === "agora" ? "Publicado com sucesso!" : "Postagem agendada!");
+      toast.success(modo === "agora" ? "Enviado com sucesso!" : "Postagem agendada!");
       qc.invalidateQueries({ queryKey: ["postagens-instagram"] });
       limpar();
     } catch (e) {
@@ -191,6 +138,7 @@ export function InstagramTab() {
       setSalvando(null);
     }
   }
+
 
 
   return (
@@ -451,20 +399,6 @@ export function InstagramTab() {
         </Card>
       )}
 
-      {imagemUrl && (
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base">Imagem gerada</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <img
-              src={imagemUrl}
-              alt="Post final"
-              className="w-full max-w-[320px] mx-auto rounded-lg border"
-            />
-          </CardContent>
-        </Card>
-      )}
 
     </div>
   );
