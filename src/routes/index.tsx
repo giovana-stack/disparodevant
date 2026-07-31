@@ -1,13 +1,12 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import {
   Newspaper,
   BarChart3,
   Link2,
-  CalendarDays,
   Instagram as InstagramIcon,
   LogOut,
   Loader2,
@@ -33,22 +32,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Calendar } from "@/components/ui/calendar";
-import { Badge } from "@/components/ui/badge";
-
 import { getAuthState, unlockApp, lockApp } from "@/lib/auth.functions";
 import {
   listPendingNoticias,
-  listSentNoticias,
-  listSent,
-  approveNoticia,
   discardNoticia,
   dispararEnquete,
   dispararPost,
   buscarNovasNoticias,
 } from "@/lib/rascunhos.functions";
 import { gerarEnquete, gerarChamadaPost } from "@/lib/gemini.functions";
-import { listPostagensInstagram } from "@/lib/instagram.functions";
+import { listPostagensPublicadas } from "@/lib/instagram.functions";
 import { InstagramTab } from "@/components/InstagramTab";
 
 export const Route = createFileRoute("/")({
@@ -150,7 +143,7 @@ function AppShell() {
 
       <main className="max-w-2xl mx-auto px-3 sm:px-4 py-4 pb-24">
         <Tabs value={tab} onValueChange={setTab}>
-          <TabsList className="grid grid-cols-5 w-full sticky top-14 z-10">
+          <TabsList className="grid grid-cols-4 w-full sticky top-14 z-10">
             <TabsTrigger value="noticias" className="flex-col gap-0.5 py-2 text-[11px]">
               <Newspaper className="w-4 h-4" /> Notícias
             </TabsTrigger>
@@ -162,9 +155,6 @@ function AppShell() {
             </TabsTrigger>
             <TabsTrigger value="instagram" className="flex-col gap-0.5 py-2 text-[11px]">
               <InstagramIcon className="w-4 h-4" /> Instagram
-            </TabsTrigger>
-            <TabsTrigger value="calendario" className="flex-col gap-0.5 py-2 text-[11px]">
-              <CalendarDays className="w-4 h-4" /> Calendário
             </TabsTrigger>
           </TabsList>
 
@@ -180,9 +170,6 @@ function AppShell() {
           <TabsContent value="instagram" className="mt-4">
             <InstagramTab />
           </TabsContent>
-          <TabsContent value="calendario" className="mt-4">
-            <CalendarioTab />
-          </TabsContent>
         </Tabs>
       </main>
     </div>
@@ -193,7 +180,6 @@ function AppShell() {
 function NoticiasTab() {
   const qc = useQueryClient();
   const listFn = useServerFn(listPendingNoticias);
-  const approveFn = useServerFn(approveNoticia);
   const discardFn = useServerFn(discardNoticia);
   const buscarFn = useServerFn(buscarNovasNoticias);
   const [buscando, setBuscando] = useState(false);
@@ -246,13 +232,6 @@ function NoticiasTab() {
           <NoticiaCard
             key={String(r.id)}
             rascunho={r}
-            onApprove={async (msg) => {
-              await approveFn({ data: { id: r.id, mensagem: msg } });
-              toast.success("Disparado!");
-              qc.invalidateQueries({ queryKey: ["noticias-pendentes"] });
-              qc.invalidateQueries({ queryKey: ["noticias-enviadas"] });
-              qc.invalidateQueries({ queryKey: ["enviados"] });
-            }}
             onDiscard={async () => {
               await discardFn({ data: { id: r.id } });
               toast.success("Descartado");
@@ -267,15 +246,13 @@ function NoticiasTab() {
 
 function NoticiaCard({
   rascunho,
-  onApprove,
   onDiscard,
 }: {
   rascunho: { id: string | number; titulo: string | null; mensagem: string | null };
-  onApprove: (msg: string) => Promise<void>;
   onDiscard: () => Promise<void>;
 }) {
   const [msg, setMsg] = useState(rascunho.mensagem ?? "");
-  const [busy, setBusy] = useState<null | "approve" | "discard">(null);
+  const [busy, setBusy] = useState<null | "discard">(null);
 
   return (
     <Card>
@@ -291,9 +268,10 @@ function NoticiaCard({
           rows={8}
           className="min-h-[180px] text-sm leading-relaxed"
         />
-        <div className="grid grid-cols-2 gap-2">
+        <div className="flex">
           <Button
             variant="outline"
+            className="w-full"
             disabled={busy !== null}
             onClick={async () => {
               setBusy("discard");
@@ -315,28 +293,6 @@ function NoticiaCard({
               </>
             )}
           </Button>
-          <Button
-            disabled={busy !== null || !msg.trim()}
-            onClick={async () => {
-              setBusy("approve");
-              try {
-                await onApprove(msg);
-              } catch (e) {
-                toast.error((e as Error).message);
-              } finally {
-                setBusy(null);
-              }
-            }}
-          >
-            {busy === "approve" ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <>
-                <Send className="w-4 h-4 mr-1" />
-                Aprovar
-              </>
-            )}
-          </Button>
         </div>
       </CardContent>
     </Card>
@@ -346,13 +302,13 @@ function NoticiaCard({
 /* ---------------- ABA 2: ENQUETE ---------------- */
 function EnqueteTab() {
   const qc = useQueryClient();
-  const listSentNoticiasFn = useServerFn(listSentNoticias);
+  const listPublicadasFn = useServerFn(listPostagensPublicadas);
   const gerarFn = useServerFn(gerarEnquete);
   const dispararFn = useServerFn(dispararEnquete);
 
   const noticiasQ = useQuery({
-    queryKey: ["noticias-enviadas"],
-    queryFn: () => listSentNoticiasFn(),
+    queryKey: ["postagens-publicadas"],
+    queryFn: () => listPublicadasFn(),
   });
 
   const [pergunta, setPergunta] = useState("");
@@ -376,7 +332,7 @@ function EnqueteTab() {
     if (!noticia) return;
     setGerando(true);
     try {
-      const base = [noticia.titulo, noticia.mensagem].filter(Boolean).join("\n\n");
+      const base = [noticia.titulo, noticia.legenda].filter(Boolean).join("\n\n");
       const r = await gerarFn({ data: { noticia: base } });
       setPergunta(r.pergunta);
       setOpcoes(r.opcoes.length >= 2 ? r.opcoes : [...r.opcoes, "", ""].slice(0, 3));
@@ -415,15 +371,15 @@ function EnqueteTab() {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
-          <Label>Baseada em uma notícia enviada</Label>
+          <Label>Baseada em um post publicado no Instagram</Label>
           <Select value={selecionada} onValueChange={setSelecionada}>
             <SelectTrigger>
-              <SelectValue placeholder="Selecione uma notícia..." />
+              <SelectValue placeholder="Selecione um post..." />
             </SelectTrigger>
             <SelectContent>
               {(noticiasQ.data ?? []).map((n) => (
                 <SelectItem key={String(n.id)} value={String(n.id)}>
-                  {(n.titulo || n.mensagem || "").slice(0, 80)}
+                  {(n.titulo || n.legenda || "").slice(0, 80)}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -609,154 +565,6 @@ function PostTab() {
         </Button>
       </CardContent>
     </Card>
-  );
-}
-
-/* ---------------- ABA 4: CALENDÁRIO ---------------- */
-const TIPO_LABEL: Record<string, string> = {
-  noticia: "Notícia",
-  enquete: "Enquete",
-  instagram: "Instagram",
-  linkedin: "LinkedIn",
-  post_ig: "Post Instagram",
-};
-const TIPO_CLASS: Record<string, string> = {
-  noticia: "bg-[var(--tipo-noticia)] text-white",
-  enquete: "bg-[var(--tipo-enquete)] text-white",
-  instagram: "bg-[var(--tipo-instagram)] text-white",
-  linkedin: "bg-[var(--tipo-linkedin)] text-white",
-  post_ig: "bg-[var(--tipo-post-ig)] text-white",
-};
-
-function ymd(d: string | Date) {
-  const dt = typeof d === "string" ? new Date(d) : d;
-  return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, "0")}-${String(
-    dt.getDate(),
-  ).padStart(2, "0")}`;
-}
-
-function CalendarioTab() {
-  const listFn = useServerFn(listSent);
-  const listIgFn = useServerFn(listPostagensInstagram);
-  const q = useQuery({ queryKey: ["enviados"], queryFn: () => listFn() });
-  const igQ = useQuery({ queryKey: ["postagens-instagram"], queryFn: () => listIgFn() });
-  const [selected, setSelected] = useState<Date | undefined>(new Date());
-
-  const byDay = useMemo(() => {
-    const m = new Map<string, Array<{ id: string; tipo: string; titulo: string | null; mensagem: string | null }>>();
-    const push = (k: string, item: { id: string; tipo: string; titulo: string | null; mensagem: string | null }) => {
-      const arr = m.get(k) ?? [];
-      arr.push(item);
-      m.set(k, arr);
-    };
-    for (const r of q.data ?? []) {
-      if (!r.enviado_em) continue;
-      push(ymd(r.enviado_em), {
-        id: String(r.id),
-        tipo: r.tipo,
-        titulo: r.titulo,
-        mensagem: r.mensagem,
-      });
-    }
-    for (const p of igQ.data ?? []) {
-      if (!p.agendado_para) continue;
-      push(ymd(p.agendado_para), {
-        id: `ig-${p.id}`,
-        tipo: "post_ig",
-        titulo: p.titulo,
-        mensagem: p.legenda,
-      });
-    }
-    return m;
-  }, [q.data, igQ.data]);
-
-  const modifiers = useMemo(() => {
-    const mods: Record<string, Date[]> = {
-      noticia: [],
-      enquete: [],
-      instagram: [],
-      linkedin: [],
-      post_ig: [],
-    };
-    for (const [k, arr] of byDay) {
-      const [y, mo, d] = k.split("-").map(Number);
-      const date = new Date(y, mo - 1, d);
-      const tipos = new Set(arr.map((a) => a.tipo));
-      for (const t of tipos) if (mods[t]) mods[t].push(date);
-    }
-    return mods;
-  }, [byDay]);
-
-
-  const dia = selected ? byDay.get(ymd(selected)) ?? [] : [];
-
-  if (q.isLoading) return <Loading />;
-  if (q.error) return <ErrorBox error={q.error} />;
-
-  return (
-    <div className="space-y-4">
-      <Card>
-        <CardContent className="p-2 flex justify-center">
-          <Calendar
-            mode="single"
-            selected={selected}
-            onSelect={setSelected}
-            modifiers={modifiers}
-            modifiersClassNames={{
-              noticia: "ring-2 ring-[var(--tipo-noticia)]",
-              enquete: "ring-2 ring-[var(--tipo-enquete)]",
-              instagram: "ring-2 ring-[var(--tipo-instagram)]",
-              linkedin: "ring-2 ring-[var(--tipo-linkedin)]",
-              post_ig: "ring-2 ring-[var(--tipo-post-ig)]",
-            }}
-            className="pointer-events-auto"
-          />
-        </CardContent>
-      </Card>
-
-      <div className="flex flex-wrap gap-2 text-xs">
-        {Object.keys(TIPO_LABEL).map((t) => (
-          <span key={t} className="inline-flex items-center gap-1.5">
-            <span
-              className="w-3 h-3 rounded-full"
-              style={{ background: `var(--tipo-${t})` }}
-            />
-            {TIPO_LABEL[t]}
-          </span>
-        ))}
-      </div>
-
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-base">
-            {selected
-              ? selected.toLocaleDateString("pt-BR", {
-                  day: "2-digit",
-                  month: "long",
-                  year: "numeric",
-                })
-              : "Selecione um dia"}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-2">
-          {dia.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Nenhum disparo nesse dia.</p>
-          ) : (
-            dia.map((it) => (
-              <div key={it.id} className="p-3 rounded-lg border bg-card space-y-1">
-                <Badge className={TIPO_CLASS[it.tipo] ?? ""}>{TIPO_LABEL[it.tipo] ?? it.tipo}</Badge>
-                <p className="text-sm font-medium">{it.titulo || "(sem título)"}</p>
-                {it.mensagem && it.mensagem !== it.titulo && (
-                  <p className="text-xs text-muted-foreground whitespace-pre-wrap line-clamp-3">
-                    {it.mensagem}
-                  </p>
-                )}
-              </div>
-            ))
-          )}
-        </CardContent>
-      </Card>
-    </div>
   );
 }
 

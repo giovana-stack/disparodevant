@@ -109,3 +109,21 @@ export const listPostagensInstagram = createServerFn({ method: "GET" }).handler(
     status: string;
   }>;
 });
+
+export const listPostagensPublicadas = createServerFn({ method: "GET" }).handler(async () => {
+  await (await import("./auth.server")).requireUnlocked();
+  const s = await supa();
+  const { data, error } = await s
+    .from("postagens_instagram")
+    .select("id, titulo, legenda, agendado_para, status")
+    .in("status", ["publicado", "publicar_agora"])
+    .order("agendado_para", { ascending: false });
+  if (error) throw new Error(error.message);
+  return (data ?? []) as Array<{
+    id: string | number;
+    titulo: string | null;
+    legenda: string | null;
+    agendado_para: string | null;
+    status: string;
+  }>;
+});
