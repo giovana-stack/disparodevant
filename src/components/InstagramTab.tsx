@@ -116,11 +116,19 @@ export function InstagramTab() {
       toast.error("Escolha data e hora");
       return;
     }
+    if (!titulo.trim()) {
+      toast.error("Digite ou selecione um título");
+      return;
+    }
+    if (!legenda.trim()) {
+      toast.error("Gere ou escreva a legenda");
+      return;
+    }
     setSalvando(modo);
     try {
       const url = await subirImagemFundo();
       if (modo === "agora") {
-        await webhookFn({ data: { titulo, imagem_fundo_url: url, legenda } });
+        await webhookFn({ data: { titulo: titulo.trim(), imagem_fundo_url: url, legenda } });
         if (noticia?.id) {
           await marcarEnviadoFn({ data: { id: noticia.id } });
         }
