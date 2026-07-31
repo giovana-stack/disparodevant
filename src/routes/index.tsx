@@ -8,6 +8,7 @@ import {
   BarChart3,
   Link2,
   CalendarDays,
+  Instagram as InstagramIcon,
   LogOut,
   Loader2,
   Trash2,
@@ -47,6 +48,8 @@ import {
   buscarNovasNoticias,
 } from "@/lib/rascunhos.functions";
 import { gerarEnquete, gerarChamadaPost } from "@/lib/gemini.functions";
+import { listPostagensInstagram } from "@/lib/instagram.functions";
+import { InstagramTab } from "@/components/InstagramTab";
 
 export const Route = createFileRoute("/")({
   loader: () => getAuthState(),
@@ -147,7 +150,7 @@ function AppShell() {
 
       <main className="max-w-2xl mx-auto px-3 sm:px-4 py-4 pb-24">
         <Tabs value={tab} onValueChange={setTab}>
-          <TabsList className="grid grid-cols-4 w-full sticky top-14 z-10">
+          <TabsList className="grid grid-cols-5 w-full sticky top-14 z-10">
             <TabsTrigger value="noticias" className="flex-col gap-0.5 py-2 text-[11px]">
               <Newspaper className="w-4 h-4" /> Notícias
             </TabsTrigger>
@@ -156,6 +159,9 @@ function AppShell() {
             </TabsTrigger>
             <TabsTrigger value="post" className="flex-col gap-0.5 py-2 text-[11px]">
               <Link2 className="w-4 h-4" /> Post
+            </TabsTrigger>
+            <TabsTrigger value="instagram" className="flex-col gap-0.5 py-2 text-[11px]">
+              <InstagramIcon className="w-4 h-4" /> Instagram
             </TabsTrigger>
             <TabsTrigger value="calendario" className="flex-col gap-0.5 py-2 text-[11px]">
               <CalendarDays className="w-4 h-4" /> Calendário
@@ -170,6 +176,9 @@ function AppShell() {
           </TabsContent>
           <TabsContent value="post" className="mt-4">
             <PostTab />
+          </TabsContent>
+          <TabsContent value="instagram" className="mt-4">
+            <InstagramTab />
           </TabsContent>
           <TabsContent value="calendario" className="mt-4">
             <CalendarioTab />
