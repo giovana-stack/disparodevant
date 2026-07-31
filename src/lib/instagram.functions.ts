@@ -59,24 +59,37 @@ export const salvarPostagemInstagram = createServerFn({ method: "POST" })
   });
 
 export const enviarWebhookMake = createServerFn({ method: "POST" })
-  .inputValidator((d: { titulo: string; photo_url: string; caption: string }) => d)
+  .inputValidator((d: { titulo: string; imagem_fundo_url: string; legenda: string }) => d)
   .handler(async ({ data }) => {
     await (await import("./auth.server")).requireUnlocked();
-    const url = process.env.MAKE_WEBHOOK;
-    if (!url) throw new Error("MAKE_WEBHOOK não configurado");
-    const res = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        titulo: data.titulo,
-        photo_url: data.photo_url,
-        caption: data.caption,
-      }),
-      redirect: "follow",
-    });
-    if (!res.ok) throw new Error(`Webhook falhou (${res.status})`);
-    return { ok: true as const };
+    const url = process.env.APPS_SCRIPT_URL;
+    if (!url) throw new Error("APPS_SCRIPT_URL não configurado");
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 120_000);
+    try {
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          titulo: data.titulo,
+          imagem_fundo_url: data.imagem_fundo_url,
+          legenda: data.legenda,
+        }),
+        redirect: "follow",
+        signal: controller.signal,
+      });
+      if (!res.ok) throw new Error(`Publicação falhou (${res.status})`);
+      return { ok: true as const };
+    } catch (e) {
+      if ((e as Error).name === "AbortError") {
+        throw new Error("A publicação demorou demais. Tente novamente.");
+      }
+      throw e;
+    } finally {
+      clearTimeout(timer);
+    }
   });
+
 
 export const listPostagensInstagram = createServerFn({ method: "GET" }).handler(async () => {
   await (await import("./auth.server")).requireUnlocked();
