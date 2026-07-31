@@ -707,6 +707,7 @@ function CalendarioTab() {
               enquete: "ring-2 ring-[var(--tipo-enquete)]",
               instagram: "ring-2 ring-[var(--tipo-instagram)]",
               linkedin: "ring-2 ring-[var(--tipo-linkedin)]",
+              post_ig: "ring-2 ring-[var(--tipo-post-ig)]",
             }}
             className="pointer-events-auto"
           />
