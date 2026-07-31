@@ -114,34 +114,43 @@ export function InstagramTab() {
     }
   }
 
-  async function exportar() {
-    if (!previewRef.current) return;
-    setExportando(true);
-    try {
-      const html2canvas = (await import("html2canvas")).default;
-      const canvas = await html2canvas(previewRef.current, {
-        backgroundColor: null,
-        scale: 2,
-        useCORS: true,
-      });
-      const dataUrl = canvas.toDataURL("image/png");
-      const r = await uploadFn({ data: { dataUrl } });
-      setImagemUrl(r.url);
-      toast.success("Imagem exportada!");
-    } catch (e) {
-      toast.error((e as Error).message || "Falha ao exportar imagem");
-    } finally {
-      setExportando(false);
-    }
+  async function gerarImagemUrl(): Promise<string> {
+    if (!previewRef.current) throw new Error("Prévia indisponível");
+    const html2canvas = (await import("html2canvas")).default;
+    const canvas = await html2canvas(previewRef.current, {
+      backgroundColor: null,
+      scale: 2,
+      useCORS: true,
+      onclone: (_doc, el) => sanitizeOklch(el as HTMLElement),
+    });
+    const dataUrl = canvas.toDataURL("image/png");
+    const r = await uploadFn({ data: { dataUrl } });
+    setImagemUrl(r.url);
+    return r.url;
+  }
+
+  function limpar() {
+    setLegenda("");
+    setImagem(null);
+    setImagemUrl(null);
+    setAgendadoPara("");
+    setMostrarAgendar(false);
+    setSelecionada("");
+    setTitulo("");
   }
 
   async function salvar(modo: "agendar" | "agora") {
+    if (modo === "agendar" && !agendadoPara) {
+      toast.error("Escolha data e hora");
+      return;
+    }
     setSalvando(modo);
     try {
+      const url = await gerarImagemUrl();
       await salvarFn({
         data: {
           titulo,
-          imagem_url: imagemUrl || "",
+          imagem_url: url,
           legenda,
           agendado_para:
             modo === "agora" ? new Date().toISOString() : new Date(agendadoPara).toISOString(),
@@ -149,20 +158,19 @@ export function InstagramTab() {
           rascunho_id: noticia?.id ?? null,
         },
       });
-      toast.success(modo === "agora" ? "Enviado para publicação!" : "Postagem agendada!");
+      if (modo === "agora") {
+        await webhookFn({ data: { photo_url: url, caption: legenda } });
+      }
+      toast.success(modo === "agora" ? "Publicado com sucesso!" : "Postagem agendada!");
       qc.invalidateQueries({ queryKey: ["postagens-instagram"] });
-      setLegenda("");
-      setImagem(null);
-      setImagemUrl(null);
-      setAgendadoPara("");
-      setSelecionada("");
-      setTitulo("");
+      limpar();
     } catch (e) {
-      toast.error((e as Error).message);
+      toast.error((e as Error).message || "Falha ao publicar");
     } finally {
       setSalvando(null);
     }
   }
+
 
   return (
     <div className="space-y-4">
