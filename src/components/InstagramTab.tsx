@@ -129,7 +129,7 @@ export function InstagramTab() {
           },
         });
       }
-      toast.success(modo === "agora" ? "Enviado com sucesso!" : "Postagem agendada!");
+      toast.success(modo === "agora" ? "Post publicado com sucesso!" : "Postagem agendada!");
       qc.invalidateQueries({ queryKey: ["postagens-instagram"] });
       limpar();
     } catch (e) {
