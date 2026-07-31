@@ -180,7 +180,7 @@ export function InstagramTab() {
                   height: 675,
                   flex: "0 0 auto",
                   overflow: "hidden",
-                  fontFamily: "Arial, Helvetica, sans-serif",
+                  fontFamily: "'Montserrat', Arial, sans-serif",
                   background: "#0F172A",
                 }}
               >
@@ -218,7 +218,8 @@ export function InstagramTab() {
                     style={{
                       background: VERDE_TAG,
                       color: "#FFFFFF",
-                      fontWeight: 700,
+                      fontFamily: "'Montserrat', Arial, sans-serif",
+                      fontWeight: 800,
                       fontSize: 18,
                       letterSpacing: 2,
                       padding: "8px 22px",
@@ -260,6 +261,7 @@ export function InstagramTab() {
                       onBlur={(e) => setTitulo(e.currentTarget.innerText)}
                       style={{
                         color: "#FFFFFF",
+                        fontFamily: "'Montserrat', Arial, sans-serif",
                         fontWeight: 700,
                         fontSize: 40,
                         lineHeight: 1.2,
