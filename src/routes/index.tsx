@@ -251,49 +251,38 @@ function NoticiaCard({
   rascunho: { id: string | number; titulo: string | null; mensagem: string | null };
   onDiscard: () => Promise<void>;
 }) {
-  const [msg, setMsg] = useState(rascunho.mensagem ?? "");
-  const [busy, setBusy] = useState<null | "discard">(null);
+  const [busy, setBusy] = useState(false);
 
   return (
     <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className="text-base leading-snug">
+      <CardContent className="p-4 flex items-start gap-3">
+        <CardTitle className="text-sm leading-snug flex-1">
           {rascunho.titulo || "Sem título"}
         </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-3">
-        <Textarea
-          value={msg}
-          onChange={(e) => setMsg(e.target.value)}
-          rows={8}
-          className="min-h-[180px] text-sm leading-relaxed"
-        />
-        <div className="flex">
-          <Button
-            variant="outline"
-            className="w-full"
-            disabled={busy !== null}
-            onClick={async () => {
-              setBusy("discard");
-              try {
-                await onDiscard();
-              } catch (e) {
-                toast.error((e as Error).message);
-              } finally {
-                setBusy(null);
-              }
-            }}
-          >
-            {busy === "discard" ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <>
-                <Trash2 className="w-4 h-4 mr-1" />
-                Descartar
-              </>
-            )}
-          </Button>
-        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          disabled={busy}
+          onClick={async () => {
+            setBusy(true);
+            try {
+              await onDiscard();
+            } catch (e) {
+              toast.error((e as Error).message);
+            } finally {
+              setBusy(false);
+            }
+          }}
+        >
+          {busy ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <>
+              <Trash2 className="w-4 h-4 mr-1" />
+              Descartar
+            </>
+          )}
+        </Button>
       </CardContent>
     </Card>
   );
