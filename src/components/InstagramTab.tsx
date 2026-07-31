@@ -380,53 +380,42 @@ export function InstagramTab() {
               </Button>
             </div>
 
-            <Button className="w-full" disabled={exportando} onClick={exportar}>
-              {exportando ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <>
-                  <Download className="w-4 h-4 mr-1" /> Exportar imagem
-                </>
-              )}
-            </Button>
-          </CardContent>
-        </Card>
-      )}
+            {mostrarAgendar && (
+              <div className="space-y-1.5">
+                <Label htmlFor="ig-data">Agendar para</Label>
+                <Input
+                  id="ig-data"
+                  type="datetime-local"
+                  value={agendadoPara}
+                  onChange={(e) => setAgendadoPara(e.target.value)}
+                />
+              </div>
+            )}
 
-      {imagemUrl && (
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base">Imagem final</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <img
-              src={imagemUrl}
-              alt="Post final"
-              className="w-full max-w-[320px] mx-auto rounded-lg border"
-            />
-            <div className="space-y-1.5">
-              <Label htmlFor="ig-data">Agendar para</Label>
-              <Input
-                id="ig-data"
-                type="datetime-local"
-                value={agendadoPara}
-                onChange={(e) => setAgendadoPara(e.target.value)}
-              />
-            </div>
             <div className="grid grid-cols-2 gap-2">
-              <Button
-                variant="outline"
-                disabled={salvando !== null || !agendadoPara}
-                onClick={() => salvar("agendar")}
-              >
-                {salvando === "agendar" ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <>
-                    <CalendarClock className="w-4 h-4 mr-1" /> Agendar
-                  </>
-                )}
-              </Button>
+              {mostrarAgendar ? (
+                <Button
+                  variant="outline"
+                  disabled={salvando !== null || !agendadoPara}
+                  onClick={() => salvar("agendar")}
+                >
+                  {salvando === "agendar" ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <>
+                      <CalendarClock className="w-4 h-4 mr-1" /> Confirmar agendamento
+                    </>
+                  )}
+                </Button>
+              ) : (
+                <Button
+                  variant="outline"
+                  disabled={salvando !== null}
+                  onClick={() => setMostrarAgendar(true)}
+                >
+                  <CalendarClock className="w-4 h-4 mr-1" /> Agendar
+                </Button>
+              )}
               <Button disabled={salvando !== null} onClick={() => salvar("agora")}>
                 {salvando === "agora" ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -440,6 +429,22 @@ export function InstagramTab() {
           </CardContent>
         </Card>
       )}
+
+      {imagemUrl && (
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Imagem gerada</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <img
+              src={imagemUrl}
+              alt="Post final"
+              className="w-full max-w-[320px] mx-auto rounded-lg border"
+            />
+          </CardContent>
+        </Card>
+      )}
+
     </div>
   );
 }
