@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { Loader2, Sparkles, Download, CalendarClock, Send } from "lucide-react";
+import { Loader2, Sparkles, CalendarClock, Send } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,12 +19,43 @@ import {
 
 import { listSentNoticias } from "@/lib/rascunhos.functions";
 import { gerarLegendaInstagram } from "@/lib/gemini.functions";
-import { uploadImagemPost, salvarPostagemInstagram } from "@/lib/instagram.functions";
+import {
+  uploadImagemPost,
+  salvarPostagemInstagram,
+  enviarWebhookMake,
+} from "@/lib/instagram.functions";
 
 const VERDE_ESCURO = "rgba(25, 42, 37, 0.75)";
 const VERDE_TAG = "#059A8E";
-const VERDE_RODAPE = "#055B54";
-const CREME = "#E5EDEC";
+
+/** html2canvas não entende cores oklch (padrão do Tailwind v4). */
+const COLOR_PROPS = [
+  "color",
+  "backgroundColor",
+  "borderTopColor",
+  "borderRightColor",
+  "borderBottomColor",
+  "borderLeftColor",
+  "outlineColor",
+  "textDecorationColor",
+  "fill",
+  "stroke",
+] as const;
+
+function sanitizeOklch(root: HTMLElement) {
+  const els = [root, ...Array.from(root.querySelectorAll<HTMLElement>("*"))];
+  for (const el of els) {
+    const cs = getComputedStyle(el);
+    for (const prop of COLOR_PROPS) {
+      const v = cs[prop] as string;
+      if (typeof v === "string" && v.includes("oklch")) {
+        el.style[prop as never] = "rgba(0, 0, 0, 0)" as never;
+      }
+    }
+    if ((cs.backgroundImage || "").includes("oklch")) el.style.backgroundImage = "none";
+    if ((cs.boxShadow || "").includes("oklch")) el.style.boxShadow = "none";
+  }
+}
 
 export function InstagramTab() {
   const qc = useQueryClient();
@@ -32,6 +63,7 @@ export function InstagramTab() {
   const legendaFn = useServerFn(gerarLegendaInstagram);
   const uploadFn = useServerFn(uploadImagemPost);
   const salvarFn = useServerFn(salvarPostagemInstagram);
+  const webhookFn = useServerFn(enviarWebhookMake);
 
   const noticiasQ = useQuery({ queryKey: ["noticias-selecionaveis"], queryFn: () => listFn() });
 
@@ -41,9 +73,10 @@ export function InstagramTab() {
   const [legenda, setLegenda] = useState("");
   const [imagemUrl, setImagemUrl] = useState<string | null>(null);
   const [agendadoPara, setAgendadoPara] = useState("");
+  const [mostrarAgendar, setMostrarAgendar] = useState(false);
   const [gerando, setGerando] = useState(false);
-  const [exportando, setExportando] = useState(false);
   const [salvando, setSalvando] = useState<null | "agendar" | "agora">(null);
+
 
   const previewRef = useRef<HTMLDivElement>(null);
 
