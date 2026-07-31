@@ -49,6 +49,21 @@ ${texto}`;
     return { chamada };
   });
 
+export const gerarLegendaInstagram = createServerFn({ method: "POST" })
+  .inputValidator((d: { titulo: string }) => d)
+  .handler(async ({ data }) => {
+    await (await import("./auth.server")).requireUnlocked();
+    const titulo = data.titulo?.trim();
+    if (!titulo) throw new Error("Título vazio");
+    const prompt = `Crie uma legenda de Instagram para a Devant Soluções Tributárias (consultoria tributária brasileira) sobre esta notícia: ${titulo}. Regras: linguagem simples e acessível para donos de empresa, entre 3 e 5 linhas, pode usar emojis com moderação, termine com exatamente 5 hashtags relevantes, NÃO repita palavras que já estão no título. Responda apenas com a legenda, nada mais.`;
+    const raw = (await callGemini(prompt, 0.9)).trim();
+    const legenda = raw.replace(/^["'`]+|["'`]+$/g, "").trim();
+    if (!legenda) throw new Error("Resposta do Gemini vazia");
+    return { legenda };
+  });
+
+
+
 export const gerarEnquete = createServerFn({ method: "POST" })
   .inputValidator((d: { noticia: string }) => d)
   .handler(async ({ data }) => {
