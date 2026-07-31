@@ -399,20 +399,6 @@ export function InstagramTab() {
         </Card>
       )}
 
-      {imagemUrl && (
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base">Imagem gerada</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <img
-              src={imagemUrl}
-              alt="Post final"
-              className="w-full max-w-[320px] mx-auto rounded-lg border"
-            />
-          </CardContent>
-        </Card>
-      )}
 
     </div>
   );
