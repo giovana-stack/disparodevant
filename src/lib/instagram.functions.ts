@@ -58,6 +58,22 @@ export const salvarPostagemInstagram = createServerFn({ method: "POST" })
     return { ok: true as const };
   });
 
+export const enviarWebhookMake = createServerFn({ method: "POST" })
+  .inputValidator((d: { photo_url: string; caption: string }) => d)
+  .handler(async ({ data }) => {
+    await (await import("./auth.server")).requireUnlocked();
+    const url = process.env.MAKE_WEBHOOK;
+    if (!url) throw new Error("MAKE_WEBHOOK não configurado");
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ photo_url: data.photo_url, caption: data.caption }),
+      redirect: "follow",
+    });
+    if (!res.ok) throw new Error(`Webhook falhou (${res.status})`);
+    return { ok: true as const };
+  });
+
 export const listPostagensInstagram = createServerFn({ method: "GET" }).handler(async () => {
   await (await import("./auth.server")).requireUnlocked();
   const s = await supa();

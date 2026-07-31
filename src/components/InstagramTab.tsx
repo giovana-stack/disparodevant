@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { Loader2, Sparkles, Download, CalendarClock, Send } from "lucide-react";
+import { Loader2, Sparkles, CalendarClock, Send } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,12 +19,43 @@ import {
 
 import { listSentNoticias } from "@/lib/rascunhos.functions";
 import { gerarLegendaInstagram } from "@/lib/gemini.functions";
-import { uploadImagemPost, salvarPostagemInstagram } from "@/lib/instagram.functions";
+import {
+  uploadImagemPost,
+  salvarPostagemInstagram,
+  enviarWebhookMake,
+} from "@/lib/instagram.functions";
 
 const VERDE_ESCURO = "rgba(25, 42, 37, 0.75)";
 const VERDE_TAG = "#059A8E";
-const VERDE_RODAPE = "#055B54";
-const CREME = "#E5EDEC";
+
+/** html2canvas não entende cores oklch (padrão do Tailwind v4). */
+const COLOR_PROPS = [
+  "color",
+  "backgroundColor",
+  "borderTopColor",
+  "borderRightColor",
+  "borderBottomColor",
+  "borderLeftColor",
+  "outlineColor",
+  "textDecorationColor",
+  "fill",
+  "stroke",
+] as const;
+
+function sanitizeOklch(root: HTMLElement) {
+  const els = [root, ...Array.from(root.querySelectorAll<HTMLElement>("*"))];
+  for (const el of els) {
+    const cs = getComputedStyle(el);
+    for (const prop of COLOR_PROPS) {
+      const v = cs[prop] as string;
+      if (typeof v === "string" && v.includes("oklch")) {
+        el.style[prop as never] = "rgba(0, 0, 0, 0)" as never;
+      }
+    }
+    if ((cs.backgroundImage || "").includes("oklch")) el.style.backgroundImage = "none";
+    if ((cs.boxShadow || "").includes("oklch")) el.style.boxShadow = "none";
+  }
+}
 
 export function InstagramTab() {
   const qc = useQueryClient();
@@ -32,6 +63,7 @@ export function InstagramTab() {
   const legendaFn = useServerFn(gerarLegendaInstagram);
   const uploadFn = useServerFn(uploadImagemPost);
   const salvarFn = useServerFn(salvarPostagemInstagram);
+  const webhookFn = useServerFn(enviarWebhookMake);
 
   const noticiasQ = useQuery({ queryKey: ["noticias-selecionaveis"], queryFn: () => listFn() });
 
@@ -41,9 +73,10 @@ export function InstagramTab() {
   const [legenda, setLegenda] = useState("");
   const [imagemUrl, setImagemUrl] = useState<string | null>(null);
   const [agendadoPara, setAgendadoPara] = useState("");
+  const [mostrarAgendar, setMostrarAgendar] = useState(false);
   const [gerando, setGerando] = useState(false);
-  const [exportando, setExportando] = useState(false);
   const [salvando, setSalvando] = useState<null | "agendar" | "agora">(null);
+
 
   const previewRef = useRef<HTMLDivElement>(null);
 
@@ -81,34 +114,43 @@ export function InstagramTab() {
     }
   }
 
-  async function exportar() {
-    if (!previewRef.current) return;
-    setExportando(true);
-    try {
-      const html2canvas = (await import("html2canvas")).default;
-      const canvas = await html2canvas(previewRef.current, {
-        backgroundColor: null,
-        scale: 2,
-        useCORS: true,
-      });
-      const dataUrl = canvas.toDataURL("image/png");
-      const r = await uploadFn({ data: { dataUrl } });
-      setImagemUrl(r.url);
-      toast.success("Imagem exportada!");
-    } catch (e) {
-      toast.error((e as Error).message || "Falha ao exportar imagem");
-    } finally {
-      setExportando(false);
-    }
+  async function gerarImagemUrl(): Promise<string> {
+    if (!previewRef.current) throw new Error("Prévia indisponível");
+    const html2canvas = (await import("html2canvas")).default;
+    const canvas = await html2canvas(previewRef.current, {
+      backgroundColor: null,
+      scale: 2,
+      useCORS: true,
+      onclone: (_doc, el) => sanitizeOklch(el as HTMLElement),
+    });
+    const dataUrl = canvas.toDataURL("image/png");
+    const r = await uploadFn({ data: { dataUrl } });
+    setImagemUrl(r.url);
+    return r.url;
+  }
+
+  function limpar() {
+    setLegenda("");
+    setImagem(null);
+    setImagemUrl(null);
+    setAgendadoPara("");
+    setMostrarAgendar(false);
+    setSelecionada("");
+    setTitulo("");
   }
 
   async function salvar(modo: "agendar" | "agora") {
+    if (modo === "agendar" && !agendadoPara) {
+      toast.error("Escolha data e hora");
+      return;
+    }
     setSalvando(modo);
     try {
+      const url = await gerarImagemUrl();
       await salvarFn({
         data: {
           titulo,
-          imagem_url: imagemUrl || "",
+          imagem_url: url,
           legenda,
           agendado_para:
             modo === "agora" ? new Date().toISOString() : new Date(agendadoPara).toISOString(),
@@ -116,20 +158,19 @@ export function InstagramTab() {
           rascunho_id: noticia?.id ?? null,
         },
       });
-      toast.success(modo === "agora" ? "Enviado para publicação!" : "Postagem agendada!");
+      if (modo === "agora") {
+        await webhookFn({ data: { photo_url: url, caption: legenda } });
+      }
+      toast.success(modo === "agora" ? "Publicado com sucesso!" : "Postagem agendada!");
       qc.invalidateQueries({ queryKey: ["postagens-instagram"] });
-      setLegenda("");
-      setImagem(null);
-      setImagemUrl(null);
-      setAgendadoPara("");
-      setSelecionada("");
-      setTitulo("");
+      limpar();
     } catch (e) {
-      toast.error((e as Error).message);
+      toast.error((e as Error).message || "Falha ao publicar");
     } finally {
       setSalvando(null);
     }
   }
+
 
   return (
     <div className="space-y-4">
@@ -339,53 +380,42 @@ export function InstagramTab() {
               </Button>
             </div>
 
-            <Button className="w-full" disabled={exportando} onClick={exportar}>
-              {exportando ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <>
-                  <Download className="w-4 h-4 mr-1" /> Exportar imagem
-                </>
-              )}
-            </Button>
-          </CardContent>
-        </Card>
-      )}
+            {mostrarAgendar && (
+              <div className="space-y-1.5">
+                <Label htmlFor="ig-data">Agendar para</Label>
+                <Input
+                  id="ig-data"
+                  type="datetime-local"
+                  value={agendadoPara}
+                  onChange={(e) => setAgendadoPara(e.target.value)}
+                />
+              </div>
+            )}
 
-      {imagemUrl && (
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base">Imagem final</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <img
-              src={imagemUrl}
-              alt="Post final"
-              className="w-full max-w-[320px] mx-auto rounded-lg border"
-            />
-            <div className="space-y-1.5">
-              <Label htmlFor="ig-data">Agendar para</Label>
-              <Input
-                id="ig-data"
-                type="datetime-local"
-                value={agendadoPara}
-                onChange={(e) => setAgendadoPara(e.target.value)}
-              />
-            </div>
             <div className="grid grid-cols-2 gap-2">
-              <Button
-                variant="outline"
-                disabled={salvando !== null || !agendadoPara}
-                onClick={() => salvar("agendar")}
-              >
-                {salvando === "agendar" ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <>
-                    <CalendarClock className="w-4 h-4 mr-1" /> Agendar
-                  </>
-                )}
-              </Button>
+              {mostrarAgendar ? (
+                <Button
+                  variant="outline"
+                  disabled={salvando !== null || !agendadoPara}
+                  onClick={() => salvar("agendar")}
+                >
+                  {salvando === "agendar" ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <>
+                      <CalendarClock className="w-4 h-4 mr-1" /> Confirmar agendamento
+                    </>
+                  )}
+                </Button>
+              ) : (
+                <Button
+                  variant="outline"
+                  disabled={salvando !== null}
+                  onClick={() => setMostrarAgendar(true)}
+                >
+                  <CalendarClock className="w-4 h-4 mr-1" /> Agendar
+                </Button>
+              )}
               <Button disabled={salvando !== null} onClick={() => salvar("agora")}>
                 {salvando === "agora" ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -399,6 +429,22 @@ export function InstagramTab() {
           </CardContent>
         </Card>
       )}
+
+      {imagemUrl && (
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Imagem gerada</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <img
+              src={imagemUrl}
+              alt="Post final"
+              className="w-full max-w-[320px] mx-auto rounded-lg border"
+            />
+          </CardContent>
+        </Card>
+      )}
+
     </div>
   );
 }
