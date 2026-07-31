@@ -17,7 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import { listSentNoticias } from "@/lib/rascunhos.functions";
+import { listSentNoticias, marcarRascunhoEnviado } from "@/lib/rascunhos.functions";
 import { gerarLegendaInstagram } from "@/lib/gemini.functions";
 import {
   uploadImagemPost,
