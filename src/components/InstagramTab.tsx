@@ -116,7 +116,7 @@ export function InstagramTab() {
     try {
       const url = await subirImagemFundo();
       if (modo === "agora") {
-        await webhookFn({ data: { titulo, photo_url: url, caption: legenda } });
+        await webhookFn({ data: { titulo, imagem_fundo_url: url, legenda } });
       } else {
         await salvarFn({
           data: {
@@ -129,7 +129,7 @@ export function InstagramTab() {
           },
         });
       }
-      toast.success(modo === "agora" ? "Enviado com sucesso!" : "Postagem agendada!");
+      toast.success(modo === "agora" ? "Post publicado com sucesso!" : "Postagem agendada!");
       qc.invalidateQueries({ queryKey: ["postagens-instagram"] });
       limpar();
     } catch (e) {
