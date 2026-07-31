@@ -39,6 +39,7 @@ export function InstagramTab() {
   const uploadFn = useServerFn(uploadImagemPost);
   const salvarFn = useServerFn(salvarPostagemInstagram);
   const webhookFn = useServerFn(enviarWebhookMake);
+  const marcarEnviadoFn = useServerFn(marcarRascunhoEnviado);
 
   const noticiasQ = useQuery({ queryKey: ["noticias-selecionaveis"], queryFn: () => listFn() });
 
