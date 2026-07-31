@@ -35,8 +35,8 @@ async function uaPoll(question: string, choices: string[]) {
 
 export const buscarNovasNoticias = createServerFn({ method: "POST" }).handler(async () => {
   await (await import("./auth.server")).requireUnlocked();
-  const url = process.env.FETCH_NOTICIAS_URL;
-  if (!url) throw new Error("FETCH_NOTICIAS_URL não configurada");
+  const url = process.env.APPS_SCRIPT_URL;
+  if (!url) throw new Error("APPS_SCRIPT_URL não configurada");
   const ctrl = new AbortController();
   const timeout = setTimeout(() => ctrl.abort(), 150000);
   try {
