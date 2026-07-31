@@ -71,7 +71,7 @@ export function InstagramTab() {
     if (!titulo.trim()) return;
     setGerando(true);
     try {
-      const r = await legendaFn({ data: { titulo } });
+      const r = await legendaFn({ data: { titulo, mensagem: noticia?.mensagem || "" } });
       setLegenda(r.legenda);
       toast.success("Legenda gerada — revise antes de agendar");
     } catch (e) {

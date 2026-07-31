@@ -50,12 +50,13 @@ ${texto}`;
   });
 
 export const gerarLegendaInstagram = createServerFn({ method: "POST" })
-  .inputValidator((d: { titulo: string }) => d)
+  .inputValidator((d: { titulo: string; mensagem: string }) => d)
   .handler(async ({ data }) => {
     await (await import("./auth.server")).requireUnlocked();
     const titulo = data.titulo?.trim();
+    const mensagem = data.mensagem?.trim();
     if (!titulo) throw new Error("Título vazio");
-    const prompt = `Crie uma legenda de Instagram para a Devant Soluções Tributárias (consultoria tributária brasileira) sobre esta notícia: ${titulo}. Regras: linguagem simples e acessível para donos de empresa, entre 3 e 5 linhas, pode usar emojis com moderação, termine com exatamente 5 hashtags relevantes, NÃO repita palavras que já estão no título. Responda apenas com a legenda, nada mais.`;
+    const prompt = `Você escreve para o Instagram da Devant Soluções Tributárias, uma consultoria tributária brasileira. Transforme a notícia abaixo em uma postagem completa de Instagram. Regras: REESCREVA completamente com suas próprias palavras, NUNCA copie trechos da notícia original. Linguagem simples e acessível para donos de empresa, como se estivesse explicando pra um amigo que não entende de imposto. Pode usar analogias e comparações do cotidiano. Entre 8 e 15 linhas. Use emojis com moderação para dar fluidez. Divida em parágrafos curtos. Comece pelo que interessa pro empresário. Termine mostrando por que isso importa na vida real do dono de empresa. NÃO repita palavras que já estão no título da imagem. Varie a abertura, nunca comece com saudações repetidas. Finalize com exatamente 5 hashtags relevantes. Não invente dados. Responda apenas com a legenda, nada mais. TÍTULO: ${titulo}. CONTEÚDO: ${mensagem || ""}`;
     const raw = (await callGemini(prompt, 0.9)).trim();
     const legenda = raw.replace(/^["'`]+|["'`]+$/g, "").trim();
     if (!legenda) throw new Error("Resposta do Gemini vazia");
