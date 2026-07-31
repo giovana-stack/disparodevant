@@ -44,6 +44,7 @@ export function InstagramTab() {
   const noticiasQ = useQuery({ queryKey: ["noticias-selecionaveis"], queryFn: () => listFn() });
 
   const [selecionada, setSelecionada] = useState("");
+  const [manual, setManual] = useState(false);
   const [titulo, setTitulo] = useState("");
   const [imagem, setImagem] = useState<string | null>(null);
   const [legenda, setLegenda] = useState("");
