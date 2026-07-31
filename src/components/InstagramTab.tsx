@@ -33,7 +33,7 @@ export function InstagramTab() {
   const uploadFn = useServerFn(uploadImagemPost);
   const salvarFn = useServerFn(salvarPostagemInstagram);
 
-  const noticiasQ = useQuery({ queryKey: ["noticias-enviadas"], queryFn: () => listFn() });
+  const noticiasQ = useQuery({ queryKey: ["noticias-selecionaveis"], queryFn: () => listFn() });
 
   const [selecionada, setSelecionada] = useState("");
   const [titulo, setTitulo] = useState("");
@@ -141,7 +141,7 @@ export function InstagramTab() {
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="space-y-1.5">
-            <Label>Baseada em uma notícia enviada</Label>
+            <Label>Selecione uma notícia</Label>
             <Select value={selecionada} onValueChange={escolherNoticia}>
               <SelectTrigger>
                 <SelectValue placeholder="Selecione uma notícia..." />
