@@ -8,6 +8,7 @@ import {
   BarChart3,
   Link2,
   CalendarDays,
+  Instagram as InstagramIcon,
   LogOut,
   Loader2,
   Trash2,
@@ -47,6 +48,8 @@ import {
   buscarNovasNoticias,
 } from "@/lib/rascunhos.functions";
 import { gerarEnquete, gerarChamadaPost } from "@/lib/gemini.functions";
+import { listPostagensInstagram } from "@/lib/instagram.functions";
+import { InstagramTab } from "@/components/InstagramTab";
 
 export const Route = createFileRoute("/")({
   loader: () => getAuthState(),
@@ -147,7 +150,7 @@ function AppShell() {
 
       <main className="max-w-2xl mx-auto px-3 sm:px-4 py-4 pb-24">
         <Tabs value={tab} onValueChange={setTab}>
-          <TabsList className="grid grid-cols-4 w-full sticky top-14 z-10">
+          <TabsList className="grid grid-cols-5 w-full sticky top-14 z-10">
             <TabsTrigger value="noticias" className="flex-col gap-0.5 py-2 text-[11px]">
               <Newspaper className="w-4 h-4" /> Notícias
             </TabsTrigger>
@@ -156,6 +159,9 @@ function AppShell() {
             </TabsTrigger>
             <TabsTrigger value="post" className="flex-col gap-0.5 py-2 text-[11px]">
               <Link2 className="w-4 h-4" /> Post
+            </TabsTrigger>
+            <TabsTrigger value="instagram" className="flex-col gap-0.5 py-2 text-[11px]">
+              <InstagramIcon className="w-4 h-4" /> Instagram
             </TabsTrigger>
             <TabsTrigger value="calendario" className="flex-col gap-0.5 py-2 text-[11px]">
               <CalendarDays className="w-4 h-4" /> Calendário
@@ -170,6 +176,9 @@ function AppShell() {
           </TabsContent>
           <TabsContent value="post" className="mt-4">
             <PostTab />
+          </TabsContent>
+          <TabsContent value="instagram" className="mt-4">
+            <InstagramTab />
           </TabsContent>
           <TabsContent value="calendario" className="mt-4">
             <CalendarioTab />
@@ -609,12 +618,14 @@ const TIPO_LABEL: Record<string, string> = {
   enquete: "Enquete",
   instagram: "Instagram",
   linkedin: "LinkedIn",
+  post_ig: "Post Instagram",
 };
 const TIPO_CLASS: Record<string, string> = {
   noticia: "bg-[var(--tipo-noticia)] text-white",
   enquete: "bg-[var(--tipo-enquete)] text-white",
   instagram: "bg-[var(--tipo-instagram)] text-white",
   linkedin: "bg-[var(--tipo-linkedin)] text-white",
+  post_ig: "bg-[var(--tipo-post-ig)] text-white",
 };
 
 function ymd(d: string | Date) {
@@ -626,20 +637,38 @@ function ymd(d: string | Date) {
 
 function CalendarioTab() {
   const listFn = useServerFn(listSent);
+  const listIgFn = useServerFn(listPostagensInstagram);
   const q = useQuery({ queryKey: ["enviados"], queryFn: () => listFn() });
+  const igQ = useQuery({ queryKey: ["postagens-instagram"], queryFn: () => listIgFn() });
   const [selected, setSelected] = useState<Date | undefined>(new Date());
 
   const byDay = useMemo(() => {
     const m = new Map<string, Array<{ id: string; tipo: string; titulo: string | null; mensagem: string | null }>>();
+    const push = (k: string, item: { id: string; tipo: string; titulo: string | null; mensagem: string | null }) => {
+      const arr = m.get(k) ?? [];
+      arr.push(item);
+      m.set(k, arr);
+    };
     for (const r of q.data ?? []) {
       if (!r.enviado_em) continue;
-      const k = ymd(r.enviado_em);
-      const arr = m.get(k) ?? [];
-      arr.push({ id: String(r.id), tipo: r.tipo, titulo: r.titulo, mensagem: r.mensagem });
-      m.set(k, arr);
+      push(ymd(r.enviado_em), {
+        id: String(r.id),
+        tipo: r.tipo,
+        titulo: r.titulo,
+        mensagem: r.mensagem,
+      });
+    }
+    for (const p of igQ.data ?? []) {
+      if (!p.agendado_para) continue;
+      push(ymd(p.agendado_para), {
+        id: `ig-${p.id}`,
+        tipo: "post_ig",
+        titulo: p.titulo,
+        mensagem: p.legenda,
+      });
     }
     return m;
-  }, [q.data]);
+  }, [q.data, igQ.data]);
 
   const modifiers = useMemo(() => {
     const mods: Record<string, Date[]> = {
@@ -647,6 +676,7 @@ function CalendarioTab() {
       enquete: [],
       instagram: [],
       linkedin: [],
+      post_ig: [],
     };
     for (const [k, arr] of byDay) {
       const [y, mo, d] = k.split("-").map(Number);
@@ -656,6 +686,7 @@ function CalendarioTab() {
     }
     return mods;
   }, [byDay]);
+
 
   const dia = selected ? byDay.get(ymd(selected)) ?? [] : [];
 
@@ -676,6 +707,7 @@ function CalendarioTab() {
               enquete: "ring-2 ring-[var(--tipo-enquete)]",
               instagram: "ring-2 ring-[var(--tipo-instagram)]",
               linkedin: "ring-2 ring-[var(--tipo-linkedin)]",
+              post_ig: "ring-2 ring-[var(--tipo-post-ig)]",
             }}
             className="pointer-events-auto"
           />

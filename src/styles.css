@@ -100,6 +100,7 @@
   --tipo-enquete: oklch(0.65 0.18 45);
   --tipo-instagram: oklch(0.6 0.2 320);
   --tipo-linkedin: oklch(0.55 0.17 240);
+  --tipo-post-ig: oklch(0.62 0.25 350);
 }
 
 .dark {
