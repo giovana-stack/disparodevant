@@ -107,6 +107,7 @@ export function InstagramTab() {
     setAgendadoPara("");
     setMostrarAgendar(false);
     setSelecionada("");
+    setManual(false);
     setTitulo("");
   }
 
