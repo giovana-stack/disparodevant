@@ -28,54 +28,8 @@ import {
 const VERDE_ESCURO = "rgba(25, 42, 37, 0.75)";
 const VERDE_TAG = "#059A8E";
 
-/**
- * html2canvas não entende oklch/color-mix (padrão do Tailwind v4).
- * Neutralizamos qualquer cor herdada do tema dentro da prévia: no clone,
- * uma folha de estilo zera todas as cores e os estilos inline (hex/rgba)
- * da prévia prevalecem por especificidade.
- */
-const PREVIEW_ID = "ig-preview";
 
-const SAFE_COLOR_CSS = `
-#${PREVIEW_ID}, #${PREVIEW_ID} * {
-  color: #FFFFFF !important;
-  background-color: rgba(0, 0, 0, 0) !important;
-  background-image: none !important;
-  border-color: rgba(0, 0, 0, 0) !important;
-  outline-color: rgba(0, 0, 0, 0) !important;
-  text-decoration-color: #FFFFFF !important;
-  caret-color: rgba(0, 0, 0, 0) !important;
-  box-shadow: none !important;
-  text-shadow: none !important;
-  fill: #FFFFFF !important;
-  stroke: rgba(0, 0, 0, 0) !important;
-}
-`;
 
-/** Reaplica os estilos inline seguros (hex/rgba) por cima do reset !important. */
-function forceInlineColors(root: HTMLElement) {
-  const els = [root, ...Array.from(root.querySelectorAll<HTMLElement>("*"))];
-  for (const el of els) {
-    const s = el.getAttribute("style") || "";
-    if (!s) continue;
-    el.setAttribute(
-      "style",
-      s
-        .split(";")
-        .filter(Boolean)
-        .map((decl) => (decl.includes("!important") ? decl : `${decl} !important`))
-        .join(";"),
-    );
-  }
-}
-
-function sanitizeOklch(doc: Document, root: HTMLElement) {
-  const style = doc.createElement("style");
-  style.textContent = SAFE_COLOR_CSS;
-  (doc.head || doc.documentElement).appendChild(style);
-  root.id = PREVIEW_ID;
-  forceInlineColors(root);
-}
 
 
 export function InstagramTab() {
