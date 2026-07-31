@@ -118,6 +118,9 @@ export function InstagramTab() {
       const url = await subirImagemFundo();
       if (modo === "agora") {
         await webhookFn({ data: { titulo, imagem_fundo_url: url, legenda } });
+        if (noticia?.id) {
+          await marcarEnviadoFn({ data: { id: noticia.id } });
+        }
       } else {
         await salvarFn({
           data: {
@@ -132,6 +135,7 @@ export function InstagramTab() {
       }
       toast.success(modo === "agora" ? "Post publicado com sucesso!" : "Postagem agendada!");
       qc.invalidateQueries({ queryKey: ["postagens-instagram"] });
+      qc.invalidateQueries({ queryKey: ["noticias-selecionaveis"] });
       limpar();
     } catch (e) {
       toast.error((e as Error).message || "Falha ao publicar");
