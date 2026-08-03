@@ -128,7 +128,7 @@ export function InstagramTab() {
     try {
       const url = await subirImagemFundo();
       if (modo === "agora") {
-        await webhookFn({ data: { titulo: titulo.trim(), imagem_fundo_url: url, legenda } });
+        await webhookFn({ data: { titulo: titulo.trim(), imagem_fundo_url: url, legenda: legenda.trim() } });
         if (noticia?.id) {
           await marcarEnviadoFn({ data: { id: noticia.id } });
         }

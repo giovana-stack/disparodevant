@@ -71,9 +71,9 @@ export const enviarWebhookMake = createServerFn({ method: "POST" })
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          titulo: data.titulo,
-          imagem_fundo_url: data.imagem_fundo_url,
-          legenda: data.legenda,
+          titulo: String(data.titulo),
+          imagem_fundo_url: String(data.imagem_fundo_url),
+          legenda: String(data.legenda),
         }),
         redirect: "follow",
         signal: controller.signal,
