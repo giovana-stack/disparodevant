@@ -191,7 +191,7 @@ export function InstagramTab() {
                     <div className="flex flex-col">
                       <span>{(n.titulo || n.mensagem || "").slice(0, 80)}</span>
                       {n.criado_em && (
-                        <span className="text-[10px] opacity-70">
+                        <span className="text-xs opacity-80">
                           {new Date(n.criado_em).toLocaleDateString("pt-BR")}
                         </span>
                       )}

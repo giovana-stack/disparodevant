@@ -1,5 +1,5 @@
 /**
- * Execute esta instrucao no projeto: preciso que, ao lado das notícias selecionadas, exiba-se a data em que elas foram coletadas.
+ * Execute esta instrucao no projeto: nao precisa da hora, somente do dia, e deixe maior, está mto pequeno.
  */
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
@@ -264,8 +264,8 @@ function NoticiaCard({
             {rascunho.titulo || "Sem título"}
           </CardTitle>
           {rascunho.criado_em && (
-            <p className="text-[10px] text-muted-foreground">
-              Coletada em: {new Date(rascunho.criado_em).toLocaleDateString("pt-BR")} às {new Date(rascunho.criado_em).toLocaleTimeString("pt-BR", { hour: '2-digit', minute: '2-digit' })}
+            <p className="text-xs text-muted-foreground">
+              Coletada em: {new Date(rascunho.criado_em).toLocaleDateString("pt-BR")}
             </p>
           )}
         </div>
