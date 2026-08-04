@@ -1,16 +1,30 @@
 /**
- * Execute esta instrucao no projeto: Salário-maternidade, aposentadoria e auxílio-doença são garantias fundamentais para as mulheres que trabalham por conta própria como MEI. ♀️
+ * Execute esta instrucao no projeto: Substitua o prompt de geração de legenda com IA por esta versão completa e definitiva:
  * 
- * Muitas empreendedoras desconhecem que o pagamento mensal do DAS mantém a seguridade social ativa e garante a proteção em momentos críticos da vida pessoal e profissional. 
+ * "Crie uma legenda de Instagram para a Devant Soluções Tributárias sobre esta notícia: {título}. Conteúdo: {mensagem do rascunho}.
  * 
- * Alguns dos direitos garantidos pela MEI com pagamento do DAS em dia é o direito de afastamento remunerado durante a gestação e o nascimento dos filhos, assim como aposentadoria por idade ou invalidez.
+ * REGRAS DE CONTEÚDO:
  * 
- * A inadimplência dessas obrigações mensais suspende imediatamente todos os benefícios previdenciários e deixa a trabalhadora totalmente desamparada quando mais precisa. 
+ * REESCREVA completamente com suas próprias palavras, nunca copie trechos.
+ * A abertura (primeira ou segunda linha) deve ser o GANCHO mais chamativo do TÍTULO — o que prende atenção, seja qual for o assunto daquela notícia. Detalhes técnicos, burocráticos ou processos ficam no MEIO do texto, nunca na abertura.
+ * Não explique siglas que o público já conhece pelo contexto (escreva 'MEI', não 'MEI (Microentreendedor Individual)').
  * 
- * A regularidade fiscal é a única ferramenta que transforma o trabalho autônomo em proteção social efetiva.
+ * REGRAS DE LINGUAGEM (CRÍTICO):
  * 
- * Siga a página para mais notícias.
- * #MEI #INSS #Mulheres #Aposentadoria #Maternidade
+ * Isto é Instagram, não um artigo. As pessoas rolam o feed rápido — a linguagem precisa ser leve, direta, conversada, do jeito que um amigo contaria a novidade.
+ * PROIBIDO: linguagem formal, jurídica ou de relatório. Nunca use expressões como 'no entanto', 'contudo', 'ao passo que', 'destaca-se', 'é importante ressaltar', 'faz-se necessário', 'referida', 'supracitada'.
+ * PROIBIDO frases longas e encadeadas. Prefira frases curtas. Se uma frase tem mais de 20 palavras, quebre em duas.
+ * O leitor é dono de empresa, não é advogado nem contador. Explique como se estivesse mandando um áudio de WhatsApp pra um amigo empresário.
+ * Entre 6 e 10 linhas de conteúdo (sem contar CTA e hashtags).
+ * Pode usar emojis com moderação para dar ritmo.
+ * Feche com uma frase de impacto sobre por que isso importa — direta, sem tom de conselho suave.
+ * 
+ * CTA E HASHTAGS (obrigatório em toda legenda):
+ * 
+ * Depois do fechamento, pule uma linha e adicione: 'Siga a página para mais notícias 📌' (ou variação natural dessa mesma ideia — pode variar a frase, mas sempre convidando a seguir a página).
+ * Depois do CTA, pule uma linha e finalize com exatamente 5 hashtags curtas e simples sobre o TEMA da notícia (nunca hashtags compostas longas, nunca hashtags com o nome da marca).
+ * 
+ * Não invente dados. Responda apenas com a legenda completa (texto + CTA + hashtags)."
  */
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";

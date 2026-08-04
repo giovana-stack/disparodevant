@@ -59,30 +59,30 @@ export const gerarLegendaInstagram = createServerFn({ method: "POST" })
     const titulo = data.titulo?.trim();
     const mensagem = data.mensagem?.trim();
     if (!titulo) throw new Error("Título vazio");
-    const prompt = `Crie uma legenda de Instagram para a Devant Soluções Tributárias sobre esta notícia: ${titulo}. Conteúdo: ${mensagem || ""}. 
+    const prompt = `Crie uma legenda de Instagram para a Devant Soluções Tributárias sobre esta notícia: ${titulo}. Conteúdo: ${mensagem || ""}.
 
-Regras de conteúdo:
-1. REESCREVA completamente com suas próprias palavras. 
-2. A legenda deve ser uma VERSÃO MINI DA MATÉRIA JORNALÍSTICA — cubra os fatos principais da notícia, explique o contexto, os números se houver, quem é afetado, o que muda e por quê. NÃO é pra ser só um resumo raso. É pra pessoa ler e entender a notícia inteira sem precisar clicar em nada. 
-3. Use o NOME REAL das coisas. O leitor é dono de empresa, não é contador — então explique termos técnicos APENAS se forem obscuros.
-4. Não explique siglas que o público-alvo já conhece pelo contexto (ex: não escreva 'MEI (Microentreendedor Individual)', apenas 'MEI'; não escreva 'Documento de Arrecadação do Simples Nacional — o famoso DAS', apenas 'DAS'). 
-5. Corte conectores burocráticos e redundâncias (prefira 'tornando-as desamparadas' a 'o que faz com que percam a qualidade de segurada e fiquem desamparadas'). 
+REGRAS DE CONTEÚDO:
 
-Regras de estilo e tom:
-1. Tom: informativo, direto, como uma notícia reescrita em linguagem simples. 
-2. Frases enxutas, sem listar itens em sequência longa quando dá pra reorganizar de forma mais fluida. 
-3. O fechamento do texto deve ser uma afirmação direta e assertiva sobre a importância do tema, não um conselho suave.
-4. SEM CTA (não diga 'ligue pro contador', 'fale com seu escritório', 'entre em contato', 'confira' nem nada do tipo). SEM frases de chamada pra ação de nenhum tipo. Apenas informe.
-5. Entre 10 e 15 linhas. Parágrafos curtos. 
-6. A abertura da legenda (primeira ou segunda linha) deve ser o GANCHO mais chamativo do TÍTULO da notícia — o que tem mais potencial de prender atenção e gerar engajamento, seja qual for o assunto daquela notícia específica (pode ser um direito, um risco, um prazo, uma mudança, uma oportunidade, o que for — depende do título). Identifique qual é o ponto central que o título está comunicando e abra por ele. Detalhes técnicos, burocráticos, pré-requisitos, mecanismos ou processos que expliquem o 'como funciona' devem ficar no MEIO do texto, nunca na abertura. A abertura vende a ideia; o meio explica os detalhes; o fechamento reforça a importância.
-7. Emojis com moderação.
+REESCREVA completamente com suas próprias palavras, nunca copie trechos.
+A abertura (primeira ou segunda linha) deve ser o GANCHO mais chamativo do TÍTULO — o que prende atenção, seja qual for o assunto daquela notícia. Detalhes técnicos, burocráticos ou processos ficam no MEIO do texto, nunca na abertura.
+Não explique siglas que o público já conhece pelo contexto (escreva 'MEI', não 'MEI (Microentreendedor Individual)').
 
-Hashtags:
-1. NUNCA use hashtags com o nome da marca. 
-2. As 5 hashtags finais devem ser termos curtos e simples (ex: #MEI, #INSS), nunca hashtags compostas longas (nada de #DireitosMEI ou #AposentadoriaMEI).
-3. Sem hashtags genéricas como #Empresarios ou #GestaoEmpresarial.
+REGRAS DE LINGUAGEM (CRÍTICO):
 
-Responda apenas com a legenda, sem aspas.`;
+Isto é Instagram, não um artigo. As pessoas rolam o feed rápido — a linguagem precisa ser leve, direta, conversada, do jeito que um amigo contaria a novidade.
+PROIBIDO: linguagem formal, jurídica ou de relatório. Nunca use expressões como 'no entanto', 'contudo', 'ao passo que', 'destaca-se', 'é importante ressaltar', 'faz-se necessário', 'referida', 'supracitada'.
+PROIBIDO frases longas e encadeadas. Prefira frases curtas. Se uma frase tem mais de 20 palavras, quebre em duas.
+O leitor é dono de empresa, não é advogado nem contador. Explique como se estivesse mandando um áudio de WhatsApp pra um amigo empresário.
+Entre 6 e 10 linhas de conteúdo (sem contar CTA e hashtags).
+Pode usar emojis com moderação para dar ritmo.
+Feche com uma frase de impacto sobre por que isso importa — direta, sem tom de conselho suave.
+
+CTA E HASHTAGS (obrigatório em toda legenda):
+
+Depois do fechamento, pule uma linha e adicione: 'Siga a página para mais notícias 📌' (ou variação natural dessa mesma ideia — pode variar a frase, mas sempre convidando a seguir a página).
+Depois do CTA, pule uma linha e finalize com exatamente 5 hashtags curtas e simples sobre o TEMA da notícia (nunca hashtags compostas longas, nunca hashtags com o nome da marca).
+
+Não invente dados. Responda apenas com a legenda completa (texto + CTA + hashtags).`;
     const raw = (await callGemini(prompt, 0.9)).trim();
     const legenda = raw.replace(/^["'`]+|["'`]+$/g, "").trim();
     if (!legenda) throw new Error("Resposta do Gemini vazia");
