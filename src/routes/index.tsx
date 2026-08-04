@@ -1,9 +1,5 @@
 /**
- * Execute esta instrucao no projeto: O app não está conectando ao Supabase. Verifique a configuração da conexão. 
- * As credenciais corretas são: URL: https://adgcnounhstuqwpvfpgp.supabase.co e chave anon. 
- * Confirme que o cliente Supabase está sendo inicializado corretamente com essas variáveis de ambiente e que todas as operações 
- * (leitura de rascunhos, upload de imagens no Storage, gravação em postagens_instagram) estão usando esse cliente. 
- * Me diga qual erro está acontecendo na conexão.
+ * Execute esta instrucao no projeto: O botão "Publicar agora" na aba Instagram não está chamando o Apps Script. Me diga: qual é o valor atual da variável APPS_SCRIPT_URL que está configurada? E mostre o trecho do código que faz o POST quando o botão é clicado — quero ver a URL que está sendo usada e os campos do JSON.
  */
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
