@@ -1,5 +1,5 @@
 /**
- * Execute esta instrucao no projeto: Imprima no console (ou me mostre) o valor exato de process.env.APPS_SCRIPT_URL neste momento, incluindo espaços ou caracteres extras se houver.
+ * Execute esta instrucao no projeto: Ao chamar o Apps Script em enviarWebhookMake, adicione um log detalhado: imprima no console do servidor (ou retorne no erro) o status HTTP da resposta, os headers de resposta, e os primeiros 500 caracteres do corpo da resposta, mesmo em caso de erro. Se o fetch lançar uma exceção antes mesmo de completar (erro de rede, DNS, timeout, CORS), imprima a mensagem de erro completa e o tipo do erro (e.name, e.message, e.cause).
  */
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";

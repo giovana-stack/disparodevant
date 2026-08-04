@@ -64,8 +64,12 @@ export const enviarWebhookMake = createServerFn({ method: "POST" })
     await (await import("./auth.server")).requireUnlocked();
     const url = process.env.APPS_SCRIPT_URL;
     if (!url) throw new Error("APPS_SCRIPT_URL não configurado");
+    
+    console.log(`[Webhook] Enviando para: ${url}`);
+    
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 120_000);
+    
     try {
       const res = await fetch(url, {
         method: "POST",
@@ -78,13 +82,27 @@ export const enviarWebhookMake = createServerFn({ method: "POST" })
         redirect: "follow",
         signal: controller.signal,
       });
-      if (!res.ok) throw new Error(`Publicação falhou (${res.status})`);
+
+      const bodyText = await res.text();
+      console.log(`[Webhook] Status: ${res.status}`);
+      console.log(`[Webhook] Headers:`, Object.fromEntries(res.headers.entries()));
+      console.log(`[Webhook] Resposta (500 chars): ${bodyText.substring(0, 500)}`);
+
+      if (!res.ok) {
+        throw new Error(`Publicação falhou (Status: ${res.status}). Detalhes: ${bodyText.substring(0, 200)}`);
+      }
+      
       return { ok: true as const };
     } catch (e) {
-      if ((e as Error).name === "AbortError") {
-        throw new Error("A publicação demorou demais. Tente novamente.");
+      const err = e as any;
+      console.error(`[Webhook] Erro tipo: ${err.name}`);
+      console.error(`[Webhook] Erro mensagem: ${err.message}`);
+      if (err.cause) console.error(`[Webhook] Erro causa:`, err.cause);
+
+      if (err.name === "AbortError") {
+        throw new Error("A publicação demorou demais (timeout de 2min). Tente novamente.");
       }
-      throw e;
+      throw new Error(`Erro no webhook: ${err.message}`);
     } finally {
       clearTimeout(timer);
     }
