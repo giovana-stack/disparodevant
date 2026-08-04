@@ -99,7 +99,7 @@ export const enviarWebhookMake = createServerFn({ method: "POST" })
 
       if (!res.ok || hasError) {
         const errorDetail = bodyText.substring(0, 500);
-        throw new Error(`Publicação falhou. ${hasError ? "Resposta do servidor indica erro: " : `Status: ${res.status}. Detalhes: `}${errorDetail}`);
+        throw new Error(`Falha ao publicar. Imagem enviada: ${data.imagem_fundo_url}. Erro do servidor: ${hasError ? "Resposta do servidor indica erro: " : `Status: ${res.status}. Detalhes: `}${errorDetail}`);
       }
       
       return { ok: true as const };
