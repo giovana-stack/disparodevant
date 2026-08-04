@@ -88,8 +88,13 @@ export const enviarWebhookMake = createServerFn({ method: "POST" })
       console.log(`[Webhook] Headers:`, Object.fromEntries(res.headers.entries()));
       console.log(`[Webhook] Resposta (500 chars): ${bodyText.substring(0, 500)}`);
 
-      if (!res.ok) {
-        throw new Error(`Publicação falhou (Status: ${res.status}). Detalhes: ${bodyText.substring(0, 200)}`);
+      // Verifica erros específicos do Apps Script/Backend no corpo da resposta
+      const lowerBody = bodyText.toLowerCase();
+      const hasError = lowerBody.includes("erro") || lowerBody.includes("função de script não encontrada");
+
+      if (!res.ok || hasError) {
+        const errorDetail = bodyText.substring(0, 500);
+        throw new Error(`Publicação falhou. ${hasError ? "Resposta do servidor indica erro: " : `Status: ${res.status}. Detalhes: `}${errorDetail}`);
       }
       
       return { ok: true as const };
