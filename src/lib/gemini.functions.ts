@@ -91,8 +91,8 @@ Emojis: no máximo 1 ou 2 no texto todo, e só se realmente agregar — não é 
 
 FORMATO FINAL:
 
-Depois do fechamento, pule uma linha: 'Siga a página para mais notícias 📌' (ou variação).
-Depois, pule uma linha e finalize com exatamente 5 hashtags curtas sobre o TEMA específico da notícia (nunca hashtags com nome da marca).
+    Depois do fechamento, pule uma linha: 'Siga a página para mais notícias 📌' (ou variação).
+    Depois, pule uma linha e finalize com exatamente 5 hashtags curtas sobre o TEMA específico da notícia. ABOSLUTAMENTE PROIBIDO HASHTAGS DE PROTEÇÃO DE MARCA COMO #DEVANT #DEVANTSOLUCOES OU QUALQUER OUTRA QUE CITE O NOME DA EMPRESA.
 
 Não invente dados nem links que não existem. Responda apenas com a legenda completa.`;
     const raw = (await callGemini(prompt, 0.9)).trim();
