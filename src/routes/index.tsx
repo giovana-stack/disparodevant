@@ -1,5 +1,5 @@
 /**
- * Execute esta instrucao no projeto: nao precisa da hora, somente do dia, e deixe maior, está mto pequeno.
+ * Execute esta instrucao no projeto: a data da notícia deve ser exibida apenas na aba notícia.
  */
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
