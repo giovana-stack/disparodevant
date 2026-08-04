@@ -1,15 +1,16 @@
 /**
- * Execute esta instrucao no projeto: Muitas mulheres empreendedoras desconhecem os benefícios previdenciários garantidos pelo pagamento mensal do DAS como MEI. ♀️
+ * Execute esta instrucao no projeto: Salário-maternidade, aposentadoria e auxílio-doença são garantias fundamentais para as mulheres que trabalham por conta própria como MEI. ♀️
  * 
- * Essa guia unificada de tributos funciona como uma contribuição para a Previdência Social, assegurando cobertura financeira em momentos cruciais da vida profissional e pessoal. 
+ * Muitas empreendedoras desconhecem que o pagamento mensal do DAS mantém a seguridade social ativa e garante a proteção em momentos críticos da vida pessoal e profissional. 
  * 
- * Ao manter os pagamentos em dia, a trabalhadora autônoma assegura o direito ao salário-maternidade durante o afastamento para o nascimento dos filhos, assim como o auxílio-doença e aposentadoria por idade ou invalidez, proteções essenciais para quem não conta com a rede de apoio da CLT. 
+ * Alguns dos direitos garantidos pela MEI com pagamento do DAS em dia é o direito de afastamento remunerado durante a gestação e o nascimento dos filhos, assim como aposentadoria por idade ou invalidez.
  * 
- * O atraso ou a falta de pagamento das guias suspende imediatamente esses direitos, deixando a empreendedora totalmente desamparada quando mais precisa de suporte financeiro. 
+ * A inadimplência dessas obrigações mensais suspende imediatamente todos os benefícios previdenciários e deixa a trabalhadora totalmente desamparada quando mais precisa. 
  * 
- * Regularizar as contribuições mensais é o único meio de transformar o CNPJ em uma verdadeira rede de segurança para o futuro.
+ * A regularidade fiscal é a única ferramenta que transforma o trabalho autônomo em proteção social efetiva.
  * 
- * #MEI #INSS #Mulheres #Empreendedorismo #Aposentadoria
+ * Siga a página para mais notícias.
+ * #MEI #INSS #Mulheres #Aposentadoria #Maternidade
  */
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
