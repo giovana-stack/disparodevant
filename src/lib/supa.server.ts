@@ -1,7 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 
 export function getSupa() {
-  const url = process.env.SUPA_URL;
+  const url = "https://adgcnounhstuqwpvfpgp.supabase.co";
   const key = process.env.SUPA_ANON_KEY;
   if (!url || !key) throw new Error("SUPA_URL / SUPA_ANON_KEY não configurados");
   return createClient(url, key, {
