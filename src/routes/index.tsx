@@ -1,5 +1,5 @@
 /**
- * Execute esta instrucao no projeto: Ao chamar o Apps Script em enviarWebhookMake, adicione um log detalhado: imprima no console do servidor (ou retorne no erro) o status HTTP da resposta, os headers de resposta, e os primeiros 500 caracteres do corpo da resposta, mesmo em caso de erro. Se o fetch lançar uma exceção antes mesmo de completar (erro de rede, DNS, timeout, CORS), imprima a mensagem de erro completa e o tipo do erro (e.name, e.message, e.cause).
+ * Execute esta instrucao no projeto: Ao processar a resposta de enviarWebhookMake, verifique se o corpo da resposta contém a palavra "erro" ou "Função de script não encontrada" mesmo quando o status HTTP é 200. Se contiver, trate como falha e retorne o texto completo do corpo da resposta no erro exibido ao usuário.
  */
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
