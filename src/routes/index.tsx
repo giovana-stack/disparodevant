@@ -264,7 +264,7 @@ function NoticiaCard({
           <CardTitle className="text-sm leading-snug flex items-center gap-1.5">
             {rascunho.titulo || "Sem título"}
             {rascunho.is_scheduled && (
-              <Clock className="w-3.5 h-3.5 text-amber-500" title="Agendado" />
+              <Clock className="w-3.5 h-3.5 text-amber-500" />
             )}
           </CardTitle>
           {rascunho.criado_em && (
