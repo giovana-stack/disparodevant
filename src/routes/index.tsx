@@ -1,7 +1,15 @@
 /**
- * Execute esta instrucao no projeto: A última alteração no prompt ficou errada. Ela fixou "focar em benefícios e direitos do empresário" como regra fixa — isso está incorreto, porque cada notícia tem um ângulo diferente, não é sempre sobre benefícios. Substitua por esta regra genérica:
+ * Execute esta instrucao no projeto: Muitas mulheres empreendedoras desconhecem os benefícios previdenciários garantidos pelo pagamento mensal do DAS como MEI. ♀️
  * 
- * "A abertura da legenda (primeira ou segunda linha) deve ser o GANCHO mais chamativo do TÍTULO da notícia — o que tem mais potencial de prender atenção e gerar engajamento, seja qual for o assunto daquela notícia específica (pode ser um direito, um risco, um prazo, uma mudança, uma oportunidade, o que for — depende do título). Identifique qual é o ponto central que o título está comunicando e abra por ele. Detalhes técnicos, burocráticos, pré-requisitos, mecanismos ou processos que expliquem o 'como funciona' devem ficar no MEIO do texto, nunca na abertura. A abertura vende a ideia; o meio explica os detalhes; o fechamento reforça a importância."
+ * Essa guia unificada de tributos funciona como uma contribuição para a Previdência Social, assegurando cobertura financeira em momentos cruciais da vida profissional e pessoal. 
+ * 
+ * Ao manter os pagamentos em dia, a trabalhadora autônoma assegura o direito ao salário-maternidade durante o afastamento para o nascimento dos filhos, assim como o auxílio-doença e aposentadoria por idade ou invalidez, proteções essenciais para quem não conta com a rede de apoio da CLT. 
+ * 
+ * O atraso ou a falta de pagamento das guias suspende imediatamente esses direitos, deixando a empreendedora totalmente desamparada quando mais precisa de suporte financeiro. 
+ * 
+ * Regularizar as contribuições mensais é o único meio de transformar o CNPJ em uma verdadeira rede de segurança para o futuro.
+ * 
+ * #MEI #INSS #Mulheres #Empreendedorismo #Aposentadoria
  */
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
