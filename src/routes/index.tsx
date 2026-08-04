@@ -1,5 +1,7 @@
 /**
- * Execute esta instrucao no projeto: Ajuste o prompt de geração de legenda com IA: adicione a regra "A abertura da legenda deve seguir EXATAMENTE o ângulo do título da notícia — se o título fala sobre direitos/benefícios, abra pelos direitos/benefícios, não pela obrigação ou burocracia que os viabiliza. Identifique qual é o ASSUNTO CENTRAL do título (o que a pessoa vai ganhar ou saber) e comece por ele. Só depois, se for relevante, explique o mecanismo ou pré-requisito por trás. Nunca abra pelo meio do caminho (ex: se o título é sobre 'direitos garantidos', não abra explicando 'a obrigação de pagar a guia X' — abra dizendo quais são os direitos)."
+ * Execute esta instrucao no projeto: A última alteração no prompt ficou errada. Ela fixou "focar em benefícios e direitos do empresário" como regra fixa — isso está incorreto, porque cada notícia tem um ângulo diferente, não é sempre sobre benefícios. Substitua por esta regra genérica:
+ * 
+ * "A abertura da legenda (primeira ou segunda linha) deve ser o GANCHO mais chamativo do TÍTULO da notícia — o que tem mais potencial de prender atenção e gerar engajamento, seja qual for o assunto daquela notícia específica (pode ser um direito, um risco, um prazo, uma mudança, uma oportunidade, o que for — depende do título). Identifique qual é o ponto central que o título está comunicando e abra por ele. Detalhes técnicos, burocráticos, pré-requisitos, mecanismos ou processos que expliquem o 'como funciona' devem ficar no MEIO do texto, nunca na abertura. A abertura vende a ideia; o meio explica os detalhes; o fechamento reforça a importância."
  */
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";

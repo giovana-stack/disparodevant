@@ -74,8 +74,8 @@ Regras de estilo e tom:
 3. O fechamento do texto deve ser uma afirmação direta e assertiva sobre a importância do tema, não um conselho suave.
 4. SEM CTA (não diga 'ligue pro contador', 'fale com seu escritório', 'entre em contato', 'confira' nem nada do tipo). SEM frases de chamada pra ação de nenhum tipo. Apenas informe.
 5. Entre 10 e 15 linhas. Parágrafos curtos. 
-6. A abertura da legenda deve seguir EXATAMENTE o ângulo do título da notícia — se o título fala sobre direitos/benefícios, abra pelos direitos/benefícios, não pela obrigação ou burocracia que os viabiliza. Identifique qual é o ASSUNTO CENTRAL do título (o que a pessoa vai ganhar ou saber) e comece por ele. Só depois, se for relevante, explique o mecanismo ou pré-requisito por trás. Nunca abra pelo meio do caminho (ex: se o título é sobre 'direitos garantidos', não abra explicando 'a obrigação de pagar a guia X' — abra dizendo quais são os direitos).
-7. Varie a abertura (dentro da regra acima). Emojis com moderação.
+6. A abertura da legenda (primeira ou segunda linha) deve ser o GANCHO mais chamativo do TÍTULO da notícia — o que tem mais potencial de prender atenção e gerar engajamento, seja qual for o assunto daquela notícia específica (pode ser um direito, um risco, um prazo, uma mudança, uma oportunidade, o que for — depende do título). Identifique qual é o ponto central que o título está comunicando e abra por ele. Detalhes técnicos, burocráticos, pré-requisitos, mecanismos ou processos que expliquem o 'como funciona' devem ficar no MEIO do texto, nunca na abertura. A abertura vende a ideia; o meio explica os detalhes; o fechamento reforça a importância.
+7. Emojis com moderação.
 
 Hashtags:
 1. NUNCA use hashtags com o nome da marca. 
