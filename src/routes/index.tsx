@@ -1,5 +1,5 @@
 /**
- * Execute esta instrucao no projeto: o botão "buscar novas notícias" não retorna com novas notícias (Logs adicionados para investigar)
+ * Execute esta instrucao no projeto: se casoo não houverem notícias ou der qualquer erro no "buscar novas notícias", exiba a mensagem de erro completa
  */
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
@@ -197,12 +197,11 @@ function NoticiasTab() {
       toast.success("Notícias atualizadas!");
       await qc.invalidateQueries({ queryKey: ["noticias-pendentes"] });
     } catch (e) {
-      const msg = (e as Error)?.message || "";
-      toast.error(
-        msg.includes("abort") || msg.includes("timeout")
-          ? "A busca demorou demais. Tente novamente."
-          : "Não foi possível buscar. Tente novamente.",
-      );
+      console.error("Erro completo na busca:", e);
+      const msg = (e as Error)?.message || JSON.stringify(e);
+      toast.error(`Erro ao buscar notícias: ${msg}`, {
+        duration: 10000, // Duração maior para o usuário conseguir ler o erro completo
+      });
     } finally {
       setBuscando(false);
     }
