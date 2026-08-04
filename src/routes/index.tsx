@@ -20,6 +20,7 @@ import {
   X,
   MessageCircle,
   RefreshCw,
+  Clock,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -251,7 +252,7 @@ function NoticiaCard({
   rascunho,
   onDiscard,
 }: {
-  rascunho: { id: string | number; titulo: string | null; mensagem: string | null; criado_em?: string | null };
+  rascunho: { id: string | number; titulo: string | null; mensagem: string | null; criado_em?: string | null; is_scheduled?: boolean };
   onDiscard: () => Promise<void>;
 }) {
   const [busy, setBusy] = useState(false);
@@ -260,8 +261,11 @@ function NoticiaCard({
     <Card>
       <CardContent className="p-4 flex items-start gap-3">
         <div className="flex-1 space-y-1">
-          <CardTitle className="text-sm leading-snug">
+          <CardTitle className="text-sm leading-snug flex items-center gap-1.5">
             {rascunho.titulo || "Sem título"}
+            {rascunho.is_scheduled && (
+              <Clock className="w-3.5 h-3.5 text-amber-500" title="Agendado" />
+            )}
           </CardTitle>
           {rascunho.criado_em && (
             <p className="text-xs text-muted-foreground">
