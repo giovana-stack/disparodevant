@@ -19,10 +19,13 @@ export const uploadImagemPost = createServerFn({ method: "POST" })
     await (await import("./auth.server")).requireUnlocked();
     if (!data.dataUrl) throw new Error("Imagem vazia");
     const s = await supa();
-    const nome = `post_${Date.now()}.png`;
+    // O nome do arquivo agora termina em .jpg
+    const nome = `post_${Date.now()}.jpg`;
     const bytes = base64ToBytes(data.dataUrl);
+    
+    // O upload agora especifica image/jpeg
     const { error } = await s.storage.from("imagens").upload(nome, bytes, {
-      contentType: "image/png",
+      contentType: "image/jpeg",
       upsert: true,
     });
     if (error) throw new Error(`Falha no upload: ${error.message}`);
