@@ -15,10 +15,6 @@ async function callGemini(prompt: string, temperature = 0.8): Promise<string> {
   if (!r.ok) throw new Error(`Gemini falhou: ${r.status} ${await r.text()}`);
   const buffer = await r.arrayBuffer();
   const text = new TextDecoder("utf-8").decode(buffer);
-  
-  if (text.includes("ï¿½") || text.includes("")) {
-    throw new Error("Erro de encoding na resposta da IA. Tente novamente.");
-  }
 
   const j = JSON.parse(text) as { candidates?: { content?: { parts?: { text?: string }[] } }[] };
   return j.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
