@@ -158,3 +158,35 @@ export const listPostagensPublicadas = createServerFn({ method: "GET" }).handler
     status: string;
   }>;
 });
+
+export const listNoticiasSelecionaveis = createServerFn({ method: "GET" }).handler(async () => {
+  await (await import("./auth.server")).requireUnlocked();
+  const s = await supa();
+  
+  const { data: alreadyPosted } = await s
+    .from("postagens_instagram")
+    .select("rascunho_id")
+    .not("rascunho_id", "is", null);
+  
+  const postedIds = (alreadyPosted ?? []).map((p: any) => p.rascunho_id);
+
+  let query = s
+    .from("rascunhos")
+    .select("id, titulo, mensagem, status, criado_em")
+    .eq("status", "pendente")
+    .eq("tipo", "noticia");
+
+  if (postedIds.length > 0) {
+    query = query.not("id", "in", `(${postedIds.join(",")})`);
+  }
+
+  const { data, error } = await query.order("criado_em", { ascending: false });
+  if (error) throw new Error(error.message);
+  return (data ?? []) as Array<{
+    id: string | number;
+    titulo: string | null;
+    mensagem: string | null;
+    status: string;
+    criado_em: string;
+  }>;
+});

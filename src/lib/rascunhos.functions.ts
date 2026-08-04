@@ -52,21 +52,9 @@ export const buscarNovasNoticias = createServerFn({ method: "POST" }).handler(as
 export const listPendingNoticias = createServerFn({ method: "GET" }).handler(async () => {
   await (await import("./auth.server")).requireUnlocked();
   const s = await supa();
-  const { data, error } = await s
-    .from("rascunhos")
-    .select("*")
-    .eq("status", "pendente")
-    .eq("tipo", "noticia")
-    .order("criado_em", { ascending: false });
-  if (error) throw new Error(error.message);
-  return data ?? [];
-});
-
-export const listSentNoticias = createServerFn({ method: "GET" }).handler(async () => {
-  await (await import("./auth.server")).requireUnlocked();
-  const s = await supa();
   
-  // Primeiro, pegamos IDs de rascunhos que já têm postagens no Instagram
+  // Pegamos IDs de rascunhos que já têm postagens no Instagram para ocultar da aba Notícias também se desejado,
+  // mas o usuário pediu especificamente que quando publicada ELA DEVE SAIR DO PAINEL "NOTICIAS".
   const { data: alreadyPosted } = await s
     .from("postagens_instagram")
     .select("rascunho_id")
@@ -76,21 +64,22 @@ export const listSentNoticias = createServerFn({ method: "GET" }).handler(async 
 
   let query = s
     .from("rascunhos")
-    .select("id, titulo, mensagem, status, criado_em, enviado_em")
+    .select("*")
     .eq("status", "pendente")
     .eq("tipo", "noticia");
 
-  // Se houver rascunhos já postados, filtramos para não mostrá-los
   if (postedIds.length > 0) {
     query = query.not("id", "in", `(${postedIds.join(",")})`);
   }
 
-  const { data, error } = await query
-    .order("criado_em", { ascending: false })
-    .limit(100);
-
+  const { data, error } = await query.order("criado_em", { ascending: false });
   if (error) throw new Error(error.message);
   return data ?? [];
+});
+
+export const listSentNoticias = createServerFn({ method: "GET" }).handler(async () => {
+  const { listNoticiasSelecionaveis } = await import("./instagram.functions");
+  return listNoticiasSelecionaveis();
 });
 
 export const listSent = createServerFn({ method: "GET" }).handler(async () => {

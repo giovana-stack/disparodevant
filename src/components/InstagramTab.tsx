@@ -57,12 +57,12 @@ export function InstagramTab() {
 
   const previewRef = useRef<HTMLDivElement>(null);
 
-  const noticia = (noticiasQ.data ?? []).find((n) => String(n.id) === selecionada);
+  const noticia = (noticiasQ.data ?? []).find((n: any) => String(n.id) === selecionada);
 
   function escolherNoticia(id: string) {
     setSelecionada(id);
     setManual(false);
-    const n = (noticiasQ.data ?? []).find((x) => String(x.id) === id);
+    const n = (noticiasQ.data ?? []).find((x: any) => String(x.id) === id);
     setTitulo(n?.titulo || "");
     setImagemUrl(null);
   }
@@ -186,7 +186,7 @@ export function InstagramTab() {
                 <SelectValue placeholder="Selecione uma notícia..." />
               </SelectTrigger>
               <SelectContent>
-                {(noticiasQ.data ?? []).map((n) => (
+                {(noticiasQ.data ?? []).map((n: any) => (
                   <SelectItem key={String(n.id)} value={String(n.id)}>
                     <div className="flex flex-col">
                       <span>{(n.titulo || n.mensagem || "").slice(0, 80)}</span>
