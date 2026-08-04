@@ -1,30 +1,47 @@
 /**
- * Execute esta instrucao no projeto: Substitua o prompt de geração de legenda com IA por esta versão completa e definitiva:
+ * Execute esta instrucao no projeto: Dois problemas graves e claros:
+ * 
+ * CTA inventado e falso — "corre pra ler no link dos stories ou na bio" não existe, não tem link nenhum. Isso é a IA alucinando um call-to-action genérico que ela "acha" que Instagram usa, mas é mentira pro seu caso — a legenda JÁ É o conteúdo completo.
+ * Ignorou completamente o assunto real — a notícia é sobre "mulheres MEI" e seus direitos (maternidade, aposentadoria, auxílios), mas o texto vira genérico sobre "MEI" sem gênero nenhum, tratando isso como imposto chato/seguro particular. Não é sobre isso — é sobre os DIREITOS ESPECÍFICOS que mulheres MEI têm.
+ * 
+ * Vou reescrever o prompt sendo muito mais explícito nesses dois pontos.
+ * 
+ * Substitua o prompt de geração de legenda com IA por esta versão:
  * 
  * "Crie uma legenda de Instagram para a Devant Soluções Tributárias sobre esta notícia: {título}. Conteúdo: {mensagem do rascunho}.
  * 
- * REGRAS DE CONTEÚDO:
+ * REGRA MAIS IMPORTANTE - FIDELIDADE AO TEMA:
  * 
- * REESCREVA completamente com suas próprias palavras, nunca copie trechos.
- * A abertura (primeira ou segunda linha) deve ser o GANCHO mais chamativo do TÍTULO — o que prende atenção, seja qual for o assunto daquela notícia. Detalhes técnicos, burocráticos ou processos ficam no MEIO do texto, nunca na abertura.
- * Não explique siglas que o público já conhece pelo contexto (escreva 'MEI', não 'MEI (Microentreendedor Individual)').
+ * Leia o TÍTULO com atenção antes de escrever. O título diz exatamente qual é o assunto e o recorte da notícia (ex: se o título fala de 'mulheres MEI' e 'direitos', a legenda é SOBRE mulheres MEI e seus direitos especificamente — não pode virar um texto genérico sobre MEI sem esse recorte).
+ * A legenda inteira deve girar em torno do que o título anuncia. Não desvie para um tema adjacente ou mais genérico.
+ * Use os fatos e números específicos que estão no conteúdo da notícia (prazos, valores, quantidade de contribuições exigidas, etc.) — não generalize se a notícia trouxe informação concreta.
  * 
- * REGRAS DE LINGUAGEM (CRÍTICO):
+ * REGRA DE CTA - PROIBIDO INVENTAR:
  * 
- * Isto é Instagram, não um artigo. As pessoas rolam o feed rápido — a linguagem precisa ser leve, direta, conversada, do jeito que um amigo contaria a novidade.
- * PROIBIDO: linguagem formal, jurídica ou de relatório. Nunca use expressões como 'no entanto', 'contudo', 'ao passo que', 'destaca-se', 'é importante ressaltar', 'faz-se necessário', 'referida', 'supracitada'.
- * PROIBIDO frases longas e encadeadas. Prefira frases curtas. Se uma frase tem mais de 20 palavras, quebre em duas.
- * O leitor é dono de empresa, não é advogado nem contador. Explique como se estivesse mandando um áudio de WhatsApp pra um amigo empresário.
+ * NUNCA mencione 'link na bio', 'link nos stories', 'matéria completa', 'saiba mais no link' ou qualquer variação disso. NÃO EXISTE link nenhum — esta legenda É o conteúdo completo, não um resumo com link para mais.
+ * O ÚNICO CTA permitido é convidar a seguir a página, no formato: 'Siga a página para mais notícias 📌' (pode variar a frase, mas sempre e apenas sobre seguir a página).
+ * 
+ * REGRAS DE ABERTURA:
+ * 
+ * A abertura (primeira ou segunda linha) deve ser o gancho mais chamativo do TÍTULO, mantendo o recorte exato do título (pessoas, situação, tema).
+ * Detalhes técnicos ou burocráticos vão no meio do texto, nunca na abertura.
+ * Não explique siglas que o público já conhece (escreva 'MEI', não 'MEI (Microentreendedor Individual)').
+ * 
+ * REGRAS DE LINGUAGEM:
+ * 
+ * Instagram, não artigo. Linguagem leve, direta, como um amigo contando a novidade.
+ * PROIBIDO linguagem formal ('no entanto', 'contudo', 'destaca-se', 'é importante ressaltar').
+ * Frases curtas. Quebre frases com mais de 20 palavras.
  * Entre 6 e 10 linhas de conteúdo (sem contar CTA e hashtags).
- * Pode usar emojis com moderação para dar ritmo.
- * Feche com uma frase de impacto sobre por que isso importa — direta, sem tom de conselho suave.
+ * Emojis com moderação.
+ * Feche com uma frase de impacto direta sobre por que isso importa PARA O PÚBLICO ESPECÍFICO do título (ex: se é sobre mulheres MEI, o fechamento fala pra mulheres MEI, não genericamente pra qualquer MEI).
  * 
- * CTA E HASHTAGS (obrigatório em toda legenda):
+ * FORMATO FINAL:
  * 
- * Depois do fechamento, pule uma linha e adicione: 'Siga a página para mais notícias 📌' (ou variação natural dessa mesma ideia — pode variar a frase, mas sempre convidando a seguir a página).
- * Depois do CTA, pule uma linha e finalize com exatamente 5 hashtags curtas e simples sobre o TEMA da notícia (nunca hashtags compostas longas, nunca hashtags com o nome da marca).
+ * Depois do fechamento, pule uma linha: 'Siga a página para mais notícias 📌' (ou variação).
+ * Depois, pule uma linha e finalize com exatamente 5 hashtags curtas sobre o TEMA específico da notícia (nunca hashtags com nome da marca).
  * 
- * Não invente dados. Responda apenas com a legenda completa (texto + CTA + hashtags)."
+ * Não invente dados nem links que não existem. Responda apenas com a legenda completa."
  */
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
