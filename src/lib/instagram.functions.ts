@@ -163,12 +163,15 @@ export const listNoticiasSelecionaveis = createServerFn({ method: "GET" }).handl
   await (await import("./auth.server")).requireUnlocked();
   const s = await supa();
   
-  const { data: alreadyPosted } = await s
+  const { data: postedData } = await s
     .from("postagens_instagram")
-    .select("rascunho_id")
+    .select("rascunho_id, status")
     .not("rascunho_id", "is", null);
   
-  const postedIds = (alreadyPosted ?? []).map((p: any) => p.rascunho_id);
+  const postedIds = (postedData ?? []).map((p: any) => p.rascunho_id);
+  const scheduledIds = (postedData ?? [])
+    .filter((p: any) => p.status === "agendado")
+    .map((p: any) => p.rascunho_id);
 
   let query = s
     .from("rascunhos")
@@ -182,11 +185,16 @@ export const listNoticiasSelecionaveis = createServerFn({ method: "GET" }).handl
 
   const { data, error } = await query.order("criado_em", { ascending: false });
   if (error) throw new Error(error.message);
-  return (data ?? []) as Array<{
+  
+  return (data ?? []).map((r: any) => ({
+    ...r,
+    is_scheduled: scheduledIds.includes(r.id)
+  })) as Array<{
     id: string | number;
     titulo: string | null;
     mensagem: string | null;
     status: string;
     criado_em: string;
+    is_scheduled: boolean;
   }>;
 });

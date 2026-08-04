@@ -53,14 +53,21 @@ export const listPendingNoticias = createServerFn({ method: "GET" }).handler(asy
   await (await import("./auth.server")).requireUnlocked();
   const s = await supa();
   
-  // Pegamos IDs de rascunhos que já têm postagens no Instagram para ocultar da aba Notícias também se desejado,
-  // mas o usuário pediu especificamente que quando publicada ELA DEVE SAIR DO PAINEL "NOTICIAS".
-  const { data: alreadyPosted } = await s
+  const { data: postedData } = await s
     .from("postagens_instagram")
-    .select("rascunho_id")
+    .select("rascunho_id, status")
     .not("rascunho_id", "is", null);
   
-  const postedIds = (alreadyPosted ?? []).map(p => p.rascunho_id);
+  const postedDataArr = postedData ?? [];
+  // Excluímos apenas os que já foram publicados (status 'publicado' ou 'publicar_agora')
+  // Os agendados devem continuar aparecendo na lista de Notícias, mas com ícone.
+  const publishedIds = postedDataArr
+    .filter(p => p.status === "publicado" || p.status === "publicar_agora")
+    .map(p => p.rascunho_id);
+
+  const scheduledIds = postedDataArr
+    .filter(p => p.status === "agendado")
+    .map(p => p.rascunho_id);
 
   let query = s
     .from("rascunhos")
@@ -68,13 +75,17 @@ export const listPendingNoticias = createServerFn({ method: "GET" }).handler(asy
     .eq("status", "pendente")
     .eq("tipo", "noticia");
 
-  if (postedIds.length > 0) {
-    query = query.not("id", "in", `(${postedIds.join(",")})`);
+  if (publishedIds.length > 0) {
+    query = query.not("id", "in", `(${publishedIds.join(",")})`);
   }
 
   const { data, error } = await query.order("criado_em", { ascending: false });
   if (error) throw new Error(error.message);
-  return data ?? [];
+  
+  return (data ?? []).map(r => ({
+    ...r,
+    is_scheduled: scheduledIds.includes(r.id)
+  }));
 });
 
 export const listSentNoticias = createServerFn({ method: "GET" }).handler(async () => {
