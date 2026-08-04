@@ -190,11 +190,6 @@ export function InstagramTab() {
                   <SelectItem key={String(n.id)} value={String(n.id)}>
                     <div className="flex flex-col">
                       <span>{(n.titulo || n.mensagem || "").slice(0, 80)}</span>
-                      {n.criado_em && (
-                        <span className="text-xs opacity-80">
-                          {new Date(n.criado_em).toLocaleDateString("pt-BR")}
-                        </span>
-                      )}
                     </div>
                   </SelectItem>
                 ))}
