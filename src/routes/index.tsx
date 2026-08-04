@@ -1,5 +1,5 @@
 /**
- * Execute esta instrucao no projeto: a publicação "Desonerações tributárias: Fazenda disponibiliza painel interativo" nao está agendada?
+ * Execute esta instrucao no projeto: eu te fiz uma pergunta, nao pedi pra voce fazer nada, eu te perguntei qual o status daquela noticia
  */
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
