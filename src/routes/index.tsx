@@ -1,5 +1,5 @@
 /**
- * Execute esta instrucao no projeto: a data da notícia deve ser exibida apenas na aba notícia.
+ * Execute esta instrucao no projeto: nao está exibindo
  */
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
