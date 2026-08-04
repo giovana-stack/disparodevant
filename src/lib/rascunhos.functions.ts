@@ -40,9 +40,20 @@ export const buscarNovasNoticias = createServerFn({ method: "POST" }).handler(as
   const ctrl = new AbortController();
   const timeout = setTimeout(() => ctrl.abort(), 150000);
   try {
-    const r = await fetch(url, { method: "POST", redirect: "follow", signal: ctrl.signal });
+    console.log("Chamando Apps Script URL:", url);
+    const r = await fetch(url, { 
+      method: "POST", 
+      redirect: "follow", 
+      signal: ctrl.signal,
+      headers: {
+        'Accept': 'application/json',
+      }
+    });
+    console.log("Apps Script Response status:", r.status);
+    const text = await r.text();
+    console.log("Apps Script Response body (first 500 chars):", text.slice(0, 500));
+    
     if (!r.ok) throw new Error(`Falha ao buscar notícias: ${r.status}`);
-    try { await r.text(); } catch { /* ignore */ }
     return { ok: true as const };
   } finally {
     clearTimeout(timeout);
