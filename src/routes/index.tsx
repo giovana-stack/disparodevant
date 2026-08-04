@@ -1,5 +1,5 @@
 /**
- * Execute esta instrucao no projeto: Atualize o valor da variável de ambiente APPS_SCRIPT_URL para: https://script.google.com/macros/s/AKfycbxGRJk33RuslWsN73PY9lZWf-LrVAFnTBjT5cAywq1LUiA52Kx6k76ZyAB3Zk4HW8gx7A/exec
+ * Execute esta instrucao no projeto: Imprima no console (ou me mostre) o valor exato de process.env.APPS_SCRIPT_URL neste momento, incluindo espaços ou caracteres extras se houver.
  */
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
