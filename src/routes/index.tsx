@@ -1,5 +1,5 @@
 /**
- * Execute esta instrucao no projeto: Em vez de só logar no console do servidor, faça o erro retornado ao usuário incluir a URL da imagem que foi enviada. Ou seja, se a publicação falhar, mostre na mensagem de erro: "Falha ao publicar. Imagem enviada: [URL aqui]. Erro do servidor: [erro aqui]".
+ * Execute esta instrucao no projeto: Ao fazer upload da imagem de fundo no Supabase Storage (bucket "imagens"), converta a imagem para JPEG antes de salvar, independente do formato original enviado pelo usuário (PNG, WEBP, etc.). O arquivo salvo deve ter extensão .jpg e content-type image/jpeg.
  */
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";

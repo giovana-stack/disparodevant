@@ -70,10 +70,23 @@ export function InstagramTab() {
   function onFile(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0];
     if (!f) return;
+    
     const reader = new FileReader();
     reader.onload = () => {
-      setImagem(String(reader.result));
-      setImagemUrl(null);
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return;
+        ctx.drawImage(img, 0, 0);
+        // Converte para JPEG com 90% de qualidade
+        const jpegDataUrl = canvas.toDataURL("image/jpeg", 0.9);
+        setImagem(jpegDataUrl);
+        setImagemUrl(null);
+      };
+      img.src = String(reader.result);
     };
     reader.readAsDataURL(f);
   }
