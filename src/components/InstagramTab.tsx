@@ -186,7 +186,7 @@ export function InstagramTab() {
                 <SelectValue placeholder="Selecione uma notícia..." />
               </SelectTrigger>
               <SelectContent>
-                {(noticiasQ.data ?? []).map((n) => (
+                {(noticiasQ.data ?? []).map((n: any) => (
                   <SelectItem key={String(n.id)} value={String(n.id)}>
                     <div className="flex flex-col">
                       <span>{(n.titulo || n.mensagem || "").slice(0, 80)}</span>
