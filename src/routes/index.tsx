@@ -1,5 +1,5 @@
 /**
- * Execute esta instrucao no projeto: eu te fiz uma pergunta, nao pedi pra voce fazer nada, eu te perguntei qual o status daquela noticia
+ * Execute esta instrucao no projeto: o botão "buscar novas notícias" não retorna com novas notícias (Logs adicionados para investigar)
  */
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";

@@ -40,10 +40,33 @@ export const buscarNovasNoticias = createServerFn({ method: "POST" }).handler(as
   const ctrl = new AbortController();
   const timeout = setTimeout(() => ctrl.abort(), 150000);
   try {
-    const r = await fetch(url, { method: "POST", redirect: "follow", signal: ctrl.signal });
+    console.log("Chamando Apps Script URL:", url);
+    const r = await fetch(url, { 
+      method: "POST", 
+      redirect: "follow", 
+      signal: ctrl.signal,
+      headers: {
+        'Accept': 'application/json',
+      }
+    });
+    console.log("Apps Script Response status:", r.status);
+    const text = await r.text();
+    console.log("Apps Script Response body (first 500 chars):", text.slice(0, 500));
+    
+    // Verificamos se o status é sucesso (200 ou redirecionamento bem-sucedido)
     if (!r.ok) throw new Error(`Falha ao buscar notícias: ${r.status}`);
-    try { await r.text(); } catch { /* ignore */ }
+    
+    // Apps Script às vezes retorna HTML de erro mesmo com status 200 se a função falhar internamente
+    if (text.includes("Script function not found") || text.includes("Erro") || text.includes("Error")) {
+       if (text.length < 1000) { // Se for uma mensagem curta de erro
+         throw new Error(`Apps Script retornou erro: ${text}`);
+       }
+    }
+
     return { ok: true as const };
+  } catch (error) {
+    console.error("Erro em buscarNovasNoticias:", error);
+    throw error;
   } finally {
     clearTimeout(timeout);
   }
