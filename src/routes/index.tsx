@@ -1,5 +1,5 @@
 /**
- * Execute esta instrucao no projeto: Remova a validação estrita de encoding que rejeita a legenda inteira quando encontra caracteres especiais. Essa validação está bloqueando legendas legítimas com acentuação normal. Em vez disso, apenas garanta que a chamada para a API do Gemini use Content-Type: application/json; charset=utf-8 no header da requisição, e que a resposta seja decodificada como UTF-8. Não rejeite a legenda gerada, apenas processe o texto normalmente.
+ * Execute esta instrucao no projeto: Ajuste o prompt de geração de legenda com IA: adicione a regra "A abertura da legenda deve seguir EXATAMENTE o ângulo do título da notícia — se o título fala sobre direitos/benefícios, abra pelos direitos/benefícios, não pela obrigação ou burocracia que os viabiliza. Identifique qual é o ASSUNTO CENTRAL do título (o que a pessoa vai ganhar ou saber) e comece por ele. Só depois, se for relevante, explique o mecanismo ou pré-requisito por trás. Nunca abra pelo meio do caminho (ex: se o título é sobre 'direitos garantidos', não abra explicando 'a obrigação de pagar a guia X' — abra dizendo quais são os direitos)."
  */
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
