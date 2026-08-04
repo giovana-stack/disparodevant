@@ -66,6 +66,11 @@ export const enviarWebhookMake = createServerFn({ method: "POST" })
     if (!url) throw new Error("APPS_SCRIPT_URL não configurado");
     
     console.log(`[Webhook] Enviando para: ${url}`);
+    console.log(`[Webhook] Payload: ${JSON.stringify({
+      titulo: String(data.titulo),
+      imagem_fundo_url: String(data.imagem_fundo_url),
+      legenda: String(data.legenda),
+    })}`);
     
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 120_000);
