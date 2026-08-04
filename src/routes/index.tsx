@@ -1,5 +1,5 @@
 /**
- * Execute esta instrucao no projeto: Me mostre o valor atual exato de process.env.APPS_SCRIPT_URL.
+ * Execute esta instrucao no projeto: preciso trocar essa url
  */
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
