@@ -13,7 +13,14 @@ async function callGemini(prompt: string, temperature = 0.8): Promise<string> {
     }),
   });
   if (!r.ok) throw new Error(`Gemini falhou: ${r.status} ${await r.text()}`);
-  const j = (await r.json()) as { candidates?: { content?: { parts?: { text?: string }[] } }[] };
+  const buffer = await r.arrayBuffer();
+  const text = new TextDecoder("utf-8").decode(buffer);
+  
+  if (text.includes("ï¿½") || text.includes("")) {
+    throw new Error("Erro de encoding na resposta da IA. Tente novamente.");
+  }
+
+  const j = JSON.parse(text) as { candidates?: { content?: { parts?: { text?: string }[] } }[] };
   return j.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
 }
 
@@ -56,7 +63,28 @@ export const gerarLegendaInstagram = createServerFn({ method: "POST" })
     const titulo = data.titulo?.trim();
     const mensagem = data.mensagem?.trim();
     if (!titulo) throw new Error("Título vazio");
-    const prompt = `Crie uma legenda de Instagram para a Devant Soluções Tributárias sobre esta notícia: ${titulo}. Conteúdo: ${mensagem || ""}. Regras: REESCREVA completamente com suas próprias palavras. A legenda deve ser uma VERSÃO MINI DA MATÉRIA JORNALÍSTICA — cubra os fatos principais da notícia, explique o contexto, os números se houver, quem é afetado, o que muda e por quê. NÃO é pra ser só um resumo raso com chamada pra ação. É pra pessoa ler e entender a notícia inteira sem precisar clicar em nada. Use o NOME REAL das coisas. O leitor é dono de empresa, não é contador — então explique termos técnicos quando aparecerem. Entre 10 e 15 linhas. Tom: informativo, direto, como uma notícia reescrita em linguagem simples. SEM CTA (não diga 'ligue pro contador', 'fale com seu escritório', 'entre em contato', 'confira' nem nada do tipo). SEM frases de chamada pra ação de nenhum tipo. Apenas informe. Emojis com moderação. Parágrafos curtos. Varie a abertura. NUNCA use hashtags com o nome da marca. As 5 hashtags finais devem ser específicas sobre o TEMA da notícia, sem hashtags genéricas como #Empresarios ou #GestaoEmpresarial. Não invente dados. Responda apenas com a legenda.`;
+    const prompt = `Crie uma legenda de Instagram para a Devant Soluções Tributárias sobre esta notícia: ${titulo}. Conteúdo: ${mensagem || ""}. 
+
+Regras de conteúdo:
+1. REESCREVA completamente com suas próprias palavras. 
+2. A legenda deve ser uma VERSÃO MINI DA MATÉRIA JORNALÍSTICA — cubra os fatos principais da notícia, explique o contexto, os números se houver, quem é afetado, o que muda e por quê. NÃO é pra ser só um resumo raso. É pra pessoa ler e entender a notícia inteira sem precisar clicar em nada. 
+3. Use o NOME REAL das coisas. O leitor é dono de empresa, não é contador — então explique termos técnicos APENAS se forem obscuros.
+4. Não explique siglas que o público-alvo já conhece pelo contexto (ex: não escreva 'MEI (Microentreendedor Individual)', apenas 'MEI'; não escreva 'Documento de Arrecadação do Simples Nacional — o famoso DAS', apenas 'DAS'). 
+5. Corte conectores burocráticos e redundâncias (prefira 'tornando-as desamparadas' a 'o que faz com que percam a qualidade de segurada e fiquem desamparadas'). 
+
+Regras de estilo e tom:
+1. Tom: informativo, direto, como uma notícia reescrita em linguagem simples. 
+2. Frases enxutas, sem listar itens em sequência longa quando dá pra reorganizar de forma mais fluida. 
+3. O fechamento do texto deve ser uma afirmação direta e assertiva sobre a importância do tema, não um conselho suave.
+4. SEM CTA (não diga 'ligue pro contador', 'fale com seu escritório', 'entre em contato', 'confira' nem nada do tipo). SEM frases de chamada pra ação de nenhum tipo. Apenas informe.
+5. Entre 10 e 15 linhas. Parágrafos curtos. Varie a abertura. Emojis com moderação.
+
+Hashtags:
+1. NUNCA use hashtags com o nome da marca. 
+2. As 5 hashtags finais devem ser termos curtos e simples (ex: #MEI, #INSS), nunca hashtags compostas longas (nada de #DireitosMEI ou #AposentadoriaMEI).
+3. Sem hashtags genéricas como #Empresarios ou #GestaoEmpresarial.
+
+Responda apenas com a legenda, sem aspas.`;
     const raw = (await callGemini(prompt, 0.9)).trim();
     const legenda = raw.replace(/^["'`]+|["'`]+$/g, "").trim();
     if (!legenda) throw new Error("Resposta do Gemini vazia");

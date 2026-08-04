@@ -1,5 +1,8 @@
 /**
- * Execute esta instrucao no projeto: se casoo não houverem notícias ou der qualquer erro no "buscar novas notícias", exiba a mensagem de erro completa
+ * Execute esta instrucao no projeto: Na aba Instagram, atualize o prompt de geração de legenda com IA com estas duas correções:
+ * 
+ * CORREÇÃO DE ENCODING: Ao chamar a API do Gemini, garanta que a requisição e a resposta usem UTF-8 explicitamente. Se a legenda gerada contiver caracteres corrompidos (como "ï¿½" ou similares), trate isso como erro e tente gerar novamente.
+ * AJUSTE DE ESTILO: Adicione estas regras ao prompt: "Não explique siglas que o público-alvo já conhece pelo contexto (ex: não escreva 'MEI (Microentreendedor Individual)', apenas 'MEI'; não escreva 'Documento de Arrecadação do Simples Nacional — o famoso DAS', apenas 'DAS'). Corte conectores burocráticos e redundâncias (prefira 'tornando-as desamparadas' a 'o que faz com que percam a qualidade de segurada e fiquem desamparadas'). Frases enxutas, sem listar itens em sequência longa quando dá pra reorganizar de forma mais fluida. O fechamento do texto deve ser uma afirmação direta e assertiva sobre a importância do tema, não um conselho suave. Hashtags devem ser termos curtos e simples (ex: #MEI, #INSS), nunca hashtags compostas longas (nada de #DireitosMEI ou #AposentadoriaMEI)."
  */
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
