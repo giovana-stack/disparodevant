@@ -78,14 +78,16 @@ A abertura (primeira ou segunda linha) deve ser o gancho mais chamativo do TÍTU
 Detalhes técnicos ou burocráticos vão no meio do texto, nunca na abertura.
 Não explique siglas que o público já conhece (escreva 'MEI', não 'MEI (Microentreendedor Individual)').
 
-REGRAS DE LINGUAGEM:
+REGRAS DE TOM E LINGUAGEM:
 
-Instagram, não artigo. Linguagem leve, direta, como um amigo contando a novidade.
-PROIBIDO linguagem formal ('no entanto', 'contudo', 'destaca-se', 'é importante ressaltar').
-Frases curtas. Quebre frases com mais de 20 palavras.
+O tom é de NOTICIÁRIO ACESSÍVEL — como um portal de notícias sério que sabe explicar as coisas em linguagem simples. NÃO é rede social de influenciador, não é bate-papo informal entre amigas.
+PROIBIDO: gírias de tratamento pessoal como 'menina', 'gente', 'meninas', 'amiga'. PROIBIDO tom de conselho de autoajuda ou coach.
+PROIBIDO linguagem formal/jurídica ('no entanto', 'contudo', 'destaca-se', 'é importante ressaltar', 'em caso de').
+Escreva na terceira pessoa ou de forma neutra, como uma notícia contaria o fato — não na segunda pessoa em tom de conselho direto o tempo todo ('você precisa', 'você deve'). Pode usar segunda pessoa pontualmente, mas o texto não é uma carta de conselhos.
+Frases curtas e diretas, mas com AUTORIDADE — é uma consultoria tributária informando, não uma amiga dando dica.
+MANTENHA os dados concretos da notícia: números, prazos, quantidade de contribuições exigidas, valores. Não generalize informação que a matéria trouxe de forma específica.
 Entre 6 e 10 linhas de conteúdo (sem contar CTA e hashtags).
-Emojis com moderação.
-Feche com uma frase de impacto direta sobre por que isso importa PARA O PÚBLICO ESPECÍFICO do título (ex: se é sobre mulheres MEI, o fechamento fala pra mulheres MEI, não genericamente pra qualquer MEI).
+Emojis: no máximo 1 ou 2 no texto todo, e só se realmente agregar — não é obrigatório usar.
 
 FORMATO FINAL:
 
