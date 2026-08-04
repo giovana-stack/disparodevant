@@ -1,5 +1,5 @@
 /**
- * Execute esta instrucao no projeto: O botão "Publicar agora" na aba Instagram não está chamando o Apps Script. Me diga: qual é o valor atual da variável APPS_SCRIPT_URL que está configurada? E mostre o trecho do código que faz o POST quando o botão é clicado — quero ver a URL que está sendo usada e os campos do JSON.
+ * Execute esta instrucao no projeto: Atualize o valor da variável de ambiente APPS_SCRIPT_URL para: https://script.google.com/macros/s/AKfycbxGRJk33RuslWsN73PY9lZWf-LrVAFnTBjT5cAywq1LUiA52Kx6k76ZyAB3Zk4HW8gx7A/exec
  */
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
