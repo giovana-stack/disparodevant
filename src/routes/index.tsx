@@ -1,5 +1,5 @@
 /**
- * Execute esta instrucao no projeto: No log de erro da última tentativa de publicação, me mostre a URL exata de imagem_fundo_url que foi enviada para o Apps Script.
+ * Execute esta instrucao no projeto: Em vez de só logar no console do servidor, faça o erro retornado ao usuário incluir a URL da imagem que foi enviada. Ou seja, se a publicação falhar, mostre na mensagem de erro: "Falha ao publicar. Imagem enviada: [URL aqui]. Erro do servidor: [erro aqui]".
  */
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
