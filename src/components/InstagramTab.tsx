@@ -57,12 +57,12 @@ export function InstagramTab() {
 
   const previewRef = useRef<HTMLDivElement>(null);
 
-  const noticia = (noticiasQ.data ?? []).find((n) => String(n.id) === selecionada);
+  const noticia = (noticiasQ.data ?? []).find((n: any) => String(n.id) === selecionada);
 
   function escolherNoticia(id: string) {
     setSelecionada(id);
     setManual(false);
-    const n = (noticiasQ.data ?? []).find((x) => String(x.id) === id);
+    const n = (noticiasQ.data ?? []).find((x: any) => String(x.id) === id);
     setTitulo(n?.titulo || "");
     setImagemUrl(null);
   }
