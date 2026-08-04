@@ -1,5 +1,5 @@
 /**
- * Execute esta instrucao no projeto: Ao fazer upload da imagem de fundo no Supabase Storage (bucket "imagens"), converta a imagem para JPEG antes de salvar, independente do formato original enviado pelo usuário (PNG, WEBP, etc.). O arquivo salvo deve ter extensão .jpg e content-type image/jpeg.
+ * Execute esta instrucao no projeto: preciso que, ao lado das notícias selecionadas, exiba-se a data em que elas foram coletadas.
  */
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
@@ -251,7 +251,7 @@ function NoticiaCard({
   rascunho,
   onDiscard,
 }: {
-  rascunho: { id: string | number; titulo: string | null; mensagem: string | null };
+  rascunho: { id: string | number; titulo: string | null; mensagem: string | null; criado_em?: string | null };
   onDiscard: () => Promise<void>;
 }) {
   const [busy, setBusy] = useState(false);
@@ -259,9 +259,16 @@ function NoticiaCard({
   return (
     <Card>
       <CardContent className="p-4 flex items-start gap-3">
-        <CardTitle className="text-sm leading-snug flex-1">
-          {rascunho.titulo || "Sem título"}
-        </CardTitle>
+        <div className="flex-1 space-y-1">
+          <CardTitle className="text-sm leading-snug">
+            {rascunho.titulo || "Sem título"}
+          </CardTitle>
+          {rascunho.criado_em && (
+            <p className="text-[10px] text-muted-foreground">
+              Coletada em: {new Date(rascunho.criado_em).toLocaleDateString("pt-BR")} às {new Date(rascunho.criado_em).toLocaleTimeString("pt-BR", { hour: '2-digit', minute: '2-digit' })}
+            </p>
+          )}
+        </div>
         <Button
           variant="outline"
           size="sm"
