@@ -65,13 +65,30 @@ export const listPendingNoticias = createServerFn({ method: "GET" }).handler(asy
 export const listSentNoticias = createServerFn({ method: "GET" }).handler(async () => {
   await (await import("./auth.server")).requireUnlocked();
   const s = await supa();
-  const { data, error } = await s
+  
+  // Primeiro, pegamos IDs de rascunhos que já têm postagens no Instagram
+  const { data: alreadyPosted } = await s
+    .from("postagens_instagram")
+    .select("rascunho_id")
+    .not("rascunho_id", "is", null);
+  
+  const postedIds = (alreadyPosted ?? []).map(p => p.rascunho_id);
+
+  let query = s
     .from("rascunhos")
     .select("id, titulo, mensagem, status, criado_em, enviado_em")
-    .in("status", ["pendente", "enviado"])
-    .eq("tipo", "noticia")
+    .eq("status", "pendente")
+    .eq("tipo", "noticia");
+
+  // Se houver rascunhos já postados, filtramos para não mostrá-los
+  if (postedIds.length > 0) {
+    query = query.not("id", "in", `(${postedIds.join(",")})`);
+  }
+
+  const { data, error } = await query
     .order("criado_em", { ascending: false })
     .limit(100);
+
   if (error) throw new Error(error.message);
   return data ?? [];
 });
