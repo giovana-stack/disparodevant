@@ -1,5 +1,5 @@
 /**
- * Execute esta instrucao no projeto: Na geração de legenda com IA (aba Instagram), adicione tratamento de erro 503 (modelo sobrecarregado). Se a chamada ao Gemini falhar com 503, tente automaticamente com outro modelo na seguinte ordem: gemini-flash-lite-latest, depois gemini-2.5-flash-lite, depois gemini-2.5-flash. Tente cada modelo até 2 vezes antes de passar pro próximo. Se todos falharem, mostre uma mensagem amigável: "O gerador de texto está sobrecarregado no momento. Tente novamente em alguns instantes."
+ * Execute esta instrucao no projeto: Adicione esta regra ao prompt de geração de legenda com IA: "Se o título contém palavras como 'entenda', 'veja como funciona', 'o que muda', 'saiba', 'como funciona', ou qualquer promessa explicativa similar, a legenda é OBRIGADA a cumprir essa promessa de forma literal e concreta — explique o que é a coisa, como funciona, ou o que muda, usando os detalhes específicos que estão no conteúdo da notícia (não fale só que 'existem mudanças' ou que 'é importante acompanhar' — explique DE FATO o que muda, usando exemplos ou definições simples). Nunca prometa explicação no título e entregue apenas um aviso genérico no texto."
  */
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
