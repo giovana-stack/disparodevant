@@ -1,5 +1,5 @@
 /**
- * Execute esta instrucao no projeto: ABOSLUTAMENTE PROIBIDO HASHTAGS DE PROTEÇÃO DE MARCA COMO #DEVANT #DEVANTSOLUCOES OU QUALQUER OUTRA QUE CITE O NOME DA EMPRESA
+ * Execute esta instrucao no projeto: Na geração de legenda com IA (aba Instagram), adicione tratamento de erro 503 (modelo sobrecarregado). Se a chamada ao Gemini falhar com 503, tente automaticamente com outro modelo na seguinte ordem: gemini-flash-lite-latest, depois gemini-2.5-flash-lite, depois gemini-2.5-flash. Tente cada modelo até 2 vezes antes de passar pro próximo. Se todos falharem, mostre uma mensagem amigável: "O gerador de texto está sobrecarregado no momento. Tente novamente em alguns instantes."
  */
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
