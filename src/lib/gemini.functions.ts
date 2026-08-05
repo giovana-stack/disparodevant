@@ -131,7 +131,7 @@ Feche com uma frase de impacto direta sobre por que isso importa pro empresário
 FORMATO FINAL:
 
 Depois do fechamento, pule uma linha: 'Siga a página para mais notícias 📌' (pode variar a frase).
-Depois, pule uma linha e finalize com exatamente 5 hashtags curtas sobre o TEMA específico (nunca com nome da marca).
+Depois, pule uma linha e finalize com exatamente 5 hashtags curtas sobre o TEMA específico (ABSOLUTAMENTE PROIBIDO HASHTAGS DE MARCA OU COM O NOME DA EMPRESA, como #DEVANT, #DEVANTSOLUCOES ou variações).
 
 Não invente dados que não estejam na notícia. Se a notícia não trouxer o detalhe específico de o que cada termo substitui, explique o conceito de forma simples mesmo assim, nunca fique apenas no nível de aviso vago. Responda apenas com a legenda completa.`;
     const raw = (await callGemini(prompt, 0.9)).trim();
