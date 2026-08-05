@@ -1,7 +1,32 @@
 /**
- * Execute esta instrucao no projeto: Ajuste o prompt de geração de legenda com IA com estas duas correções:
- * PROIBIDO repetir ou parafrasear o título na primeira linha da legenda. A abertura precisa ser uma reformulação completamente diferente do título — um gancho novo, não um eco do que já foi dito no título (que a pessoa já leu).
- * Quando o título prometer explicação ('entenda', 'como funciona', 'o que muda'), a legenda precisa OBRIGATORIAMENTE incluir pelo menos uma frase de definição concreta pra cada elemento citado. Por exemplo, se a notícia fala de IBS e CBS, a legenda precisa dizer algo como 'o IBS substitui o ICMS e o ISS, e vai incidir sobre [o que]' e 'a CBS substitui o PIS e a Cofins, cobrando sobre [o que]' — usando as informações reais que estão no conteúdo da notícia. NÃO é suficiente dizer 'a reforma unifica tributos complexos' — é preciso nomear especificamente quais tributos cada novo imposto substitui e o que ele passa a cobrar, se essa informação estiver disponível no conteúdo fornecido. Se o conteúdo da notícia não trouxer esse detalhe específico, a legenda deve pelo menos explicar o conceito geral de forma didática (o que significa 'unificar tributos' na prática, dando um exemplo simples), nunca ficar apenas no nível de aviso vago.
+ * Execute esta instrucao no projeto: Substitua completamente o prompt de geração de legenda com IA por esta versão:
+ * 
+ * "Crie uma legenda de Instagram para a Devant Soluções Tributárias sobre esta notícia: {título}. Conteúdo: {mensagem do rascunho}.
+ * 
+ * REGRA CRÍTICA DE EXPLICAÇÃO - LEIA COM ATENÇÃO:
+ * Se a notícia menciona termos técnicos (siglas de impostos, nomes de tributos, mecanismos), você é OBRIGADO a explicar o que cada termo significa, usando frases simples e diretas, tipo 'X é o novo imposto que substitui Y e Z'. NÃO é permitido apenas dizer que 'há uma unificação' ou 'simplificação' sem dizer CONCRETAMENTE o que está sendo unificado com o quê.
+ * Exemplo do que NÃO fazer: 'a reforma consolida tributos complexos em referências padronizadas' (isso não explica nada, é vago).
+ * Exemplo do que FAZER: 'o IBS vai substituir o ICMS (imposto estadual) e o ISS (imposto municipal). Já a CBS substitui o PIS e a Cofins (contribuições federais). Ou seja: em vez de vários impostos diferentes, sua empresa vai lidar com só dois.'
+ * Use essa lógica de exemplo concreto para QUALQUER termo técnico que aparecer na notícia, usando as informações reais do conteúdo fornecido.
+ * 
+ * REGRA DE ABERTURA:
+ * A primeira linha NUNCA pode repetir ou parafrasear o título. Comece de um jeito diferente — pode ser uma pergunta, uma constatação prática, um número, uma situação do dia a dia da empresa. Teste: se a abertura poderia ser confundida com o título reescrito, está errado.
+ * 
+ * REGRAS DE TOM E LINGUAGEM:
+ * 
+ * Tom de noticiário acessível: informativo mas simples, como um portal de notícias sério que explica bem. NÃO é bate-papo entre amigas nem conteúdo de influenciador.
+ * PROIBIDO vocabulário rebuscado: nunca use 'diretrizes', 'parâmetros normativos', 'consolidação', 'panorama', 'cenário', 'no entanto', 'contudo', 'destaca-se', 'é importante ressaltar'.
+ * Frases curtas e diretas. Se uma frase tem mais de 20 palavras, quebre em duas.
+ * Entre 6 e 10 linhas de conteúdo (sem contar CTA e hashtags).
+ * Emojis: no máximo 1 ou 2, opcional.
+ * Feche com uma frase de impacto direta sobre por que isso importa pro empresário.
+ * 
+ * FORMATO FINAL:
+ * 
+ * Depois do fechamento, pule uma linha: 'Siga a página para mais notícias 📌' (pode variar a frase).
+ * Depois, pule uma linha e finalize with exatamente 5 hashtags curtas sobre o TEMA específico (nunca com nome da marca).
+ * 
+ * Não invente dados que não estejam na notícia. Se a notícia não trouxer o detalhe específico de o que cada termo substitui, explique o conceito de forma simples mesmo assim, nunca fique apenas no nível de aviso vago. Responda apenas com a legenda completa."
  */
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";

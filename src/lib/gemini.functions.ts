@@ -110,45 +110,30 @@ export const gerarLegendaInstagram = createServerFn({ method: "POST" })
     if (!titulo) throw new Error("Título vazio");
     const prompt = `Crie uma legenda de Instagram para a Devant Soluções Tributárias sobre esta notícia: ${titulo}. Conteúdo: ${mensagem || ""}.
 
-REGRA MAIS IMPORTANTE - FIDELIDADE AO TEMA:
+REGRA CRÍTICA DE EXPLICAÇÃO - LEIA COM ATENÇÃO:
+Se a notícia menciona termos técnicos (siglas de impostos, nomes de tributos, mecanismos), você é OBRIGADO a explicar o que cada termo significa, usando frases simples e diretas, tipo 'X é o novo imposto que substitui Y e Z'. NÃO é permitido apenas dizer que 'há uma unificação' ou 'simplificação' sem dizer CONCRETAMENTE o que está sendo unificado com o quê.
+Exemplo do que NÃO fazer: 'a reforma consolida tributos complexos em referências padronizadas' (isso não explica nada, é vago).
+Exemplo do que FAZER: 'o IBS vai substituir o ICMS (imposto estadual) e o ISS (imposto municipal). Já a CBS substitui o PIS e a Cofins (contribuições federais). Ou seja: em vez de vários impostos diferentes, sua empresa vai lidar com só dois.'
+Use essa lógica de exemplo concreto para QUALQUER termo técnico que aparecer na notícia, usando as informações reais do conteúdo fornecido.
 
-Leia o TÍTULO com atenção antes de escrever. O título diz exatamente qual é o assunto e o recorte da notícia (ex: se o título fala de 'mulheres MEI' e 'direitos', a legenda é SOBRE mulheres MEI e seus direitos especificamente — não pode virar um texto genérico sobre MEI sem esse recorte).
-A legenda inteira deve girar em torno do que o título anuncia. Não desvie para um tema adjacente ou mais genérico.
-Use os fatos e números específicos que estão no conteúdo da notícia (prazos, valores, quantidade de contribuições exigidas, etc.) — não generalize se a notícia trouxe informação concreta.
-
-Se o título contém palavras como 'entenda', 'veja como funciona', 'o que muda', 'saiba', 'como funciona', ou qualquer promessa explicativa similar, a legenda é OBRIGADA a cumprir essa promessa de forma literal e concreta.
-Quando o título prometer explicação, a legenda precisa OBRIGATORIAMENTE incluir pelo menos uma frase de definição concreta pra cada elemento citado. Por exemplo, se a notícia fala de IBS e CBS, a legenda precisa dizer algo como 'o IBS substitui o ICMS e o ISS, e vai incidir sobre [o que]' e 'a CBS substitui o PIS e a Cofins, cobrando sobre [o que]' — usando as informações reais que estão no conteúdo da notícia. NÃO é suficiente dizer 'a reforma unifica tributos complexos' — é preciso nomear especificamente quais tributos cada novo imposto substitui e o que ele passa a cobrar, se essa informação estiver disponível no conteúdo fornecido. Se o conteúdo da notícia não trouxer esse detalhe específico, a legenda deve pelo menos explicar o conceito geral de forma didática (o que significa 'unificar tributos' na prática, dando um exemplo simples), nunca ficar apenas no nível de aviso vago.
-Nunca prometa explicação no título e entregue apenas um aviso genérico no texto.
-
-REGRA DE CTA - PROIBIDO INVENTAR:
-
-NUNCA mencione 'link na bio', 'link nos stories', 'matéria completa', 'saiba mais no link' ou qualquer variação disso. NÃO EXISTE link nenhum — esta legenda É o conteúdo completo, não um resumo com link para mais.
-O ÚNICO CTA permitido é convidar a seguir a página, no formato: 'Siga a página para mais notícias 📌' (pode variar a frase, mas sempre e apenas sobre seguir a página).
-
-REGRAS DE ABERTURA:
-
-PROIBIDO repetir ou parafrasear o título na primeira linha da legenda. A abertura precisa ser uma reformulação completamente diferente do título — um gancho novo, não um eco do que já foi dito no título (que a pessoa já leu).
-A abertura (primeira ou segunda linha) deve ser o gancho mais chamativo do TÍTULO, mantendo o recorte exato do título (pessoas, situação, tema).
-Detalhes técnicos ou burocráticos vão no meio do texto, nunca na abertura.
-Não explique siglas que o público já conhece (escreva 'MEI', não 'MEI (Microentreendedor Individual)').
+REGRA DE ABERTURA:
+A primeira linha NUNCA pode repetir ou parafrasear o título. Comece de um jeito diferente — pode ser uma pergunta, uma constatação prática, um número, uma situação do dia a dia da empresa. Teste: se a abertura poderia ser confundida com o título reescrito, está errado.
 
 REGRAS DE TOM E LINGUAGEM:
 
-O tom é de NOTICIÁRIO ACESSÍVEL — como um portal de notícias sério que sabe explicar as coisas em linguagem simples. NÃO é rede social de influenciador, não é bate-papo informal entre amigas.
-PROIBIDO: gírias de tratamento pessoal como 'menina', 'gente', 'meninas', 'amiga'. PROIBIDO tom de conselho de autoajuda ou coach.
-PROIBIDO linguagem formal/jurídica ('no entanto', 'contudo', 'destaca-se', 'é importante ressaltar', 'em caso de').
-Escreva na terceira pessoa ou de forma neutra, como uma notícia contaria o fato — não na segunda pessoa em tom de conselho direto o tempo todo ('você precisa', 'você deve'). Pode usar segunda pessoa pontualmente, mas o texto não é uma carta de conselhos.
-Frases curtas e diretas, mas com AUTORIDADE — é uma consultoria tributária informando, não uma amiga dando dica.
-MANTENHA os dados concretos da notícia: números, prazos, quantidade de contribuições exigidas, valores. Não generalize informação que a matéria trouxe de forma específica.
+Tom de noticiário acessível: informativo mas simples, como um portal de notícias sério que explica bem. NÃO é bate-papo entre amigas nem conteúdo de influenciador.
+PROIBIDO vocabulário rebuscado: nunca use 'diretrizes', 'parâmetros normativos', 'consolidação', 'panorama', 'cenário', 'no entanto', 'contudo', 'destaca-se', 'é importante ressaltar'.
+Frases curtas e diretas. Se uma frase tem mais de 20 palavras, quebre em duas.
 Entre 6 e 10 linhas de conteúdo (sem contar CTA e hashtags).
-Emojis: no máximo 1 ou 2 no texto todo, e só se realmente agregar — não é obrigatório usar.
+Emojis: no máximo 1 ou 2, opcional.
+Feche com uma frase de impacto direta sobre por que isso importa pro empresário.
 
 FORMATO FINAL:
 
-    Depois do fechamento, pule uma linha: 'Siga a página para mais notícias 📌' (ou variação).
-    Depois, pule uma linha e finalize com exatamente 5 hashtags curtas sobre o TEMA específico da notícia. ABOSLUTAMENTE PROIBIDO HASHTAGS DE PROTEÇÃO DE MARCA COMO #DEVANT #DEVANTSOLUCOES OU QUALQUER OUTRA QUE CITE O NOME DA EMPRESA.
+Depois do fechamento, pule uma linha: 'Siga a página para mais notícias 📌' (pode variar a frase).
+Depois, pule uma linha e finalize com exatamente 5 hashtags curtas sobre o TEMA específico (nunca com nome da marca).
 
-Não invente dados nem links que não existem. Responda apenas com a legenda completa.`;
+Não invente dados que não estejam na notícia. Se a notícia não trouxer o detalhe específico de o que cada termo substitui, explique o conceito de forma simples mesmo assim, nunca fique apenas no nível de aviso vago. Responda apenas com a legenda completa.`;
     const raw = (await callGemini(prompt, 0.9)).trim();
     const legenda = raw.replace(/^["'`]+|["'`]+$/g, "").trim();
     if (!legenda) throw new Error("Resposta do Gemini vazia");
