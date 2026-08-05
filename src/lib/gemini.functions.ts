@@ -125,6 +125,7 @@ O ÚNICO CTA permitido é convidar a seguir a página, no formato: 'Siga a pági
 
 REGRAS DE ABERTURA:
 
+PROIBIDO repetir ou parafrasear o título na primeira linha da legenda. A abertura precisa ser uma reformulação completamente diferente do título — um gancho novo, não um eco do que já foi dito no título (que a pessoa já leu).
 A abertura (primeira ou segunda linha) deve ser o gancho mais chamativo do TÍTULO, mantendo o recorte exato do título (pessoas, situação, tema).
 Detalhes técnicos ou burocráticos vão no meio do texto, nunca na abertura.
 Não explique siglas que o público já conhece (escreva 'MEI', não 'MEI (Microentreendedor Individual)').
