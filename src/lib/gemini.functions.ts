@@ -156,8 +156,6 @@ export const gerarEnquete = createServerFn({ method: "POST" })
   .inputValidator((d: { noticia: string }) => d)
   .handler(async ({ data }) => {
     await (await import("./auth.server")).requireUnlocked();
-    const key = process.env.GEMINI_API_KEY;
-    if (!key) throw new Error("GEMINI_API_KEY não configurada");
     const noticia = data.noticia?.trim();
     if (!noticia) throw new Error("Notícia vazia");
 
@@ -177,20 +175,8 @@ Responda APENAS com JSON válido, sem markdown, sem comentários, no formato:
 Notícia:
 ${noticia}`;
 
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-lite-latest:generateContent?key=${encodeURIComponent(key)}`;
-    const r = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { responseMimeType: "application/json", temperature: 0.7 },
-      }),
-    });
-    if (!r.ok) throw new Error(`Gemini falhou: ${r.status} ${await r.text()}`);
-    const j = (await r.json()) as {
-      candidates?: { content?: { parts?: { text?: string }[] } }[];
-    };
-    const text = j.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+    const text = await callGemini(prompt, 0.7, "application/json");
+    
     let parsed: { pergunta?: string; opcoes?: string[] } = {};
     try {
       parsed = JSON.parse(text);
