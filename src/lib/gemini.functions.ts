@@ -116,6 +116,8 @@ Leia o TÍTULO com atenção antes de escrever. O título diz exatamente qual é
 A legenda inteira deve girar em torno do que o título anuncia. Não desvie para um tema adjacente ou mais genérico.
 Use os fatos e números específicos que estão no conteúdo da notícia (prazos, valores, quantidade de contribuições exigidas, etc.) — não generalize se a notícia trouxe informação concreta.
 
+Se o título contém palavras como 'entenda', 'veja como funciona', 'o que muda', 'saiba', 'como funciona', ou qualquer promessa explicativa similar, a legenda é OBRIGADA a cumprir essa promessa de forma literal e concreta — explique o que é a coisa, como funciona, ou o que muda, usando os detalhes específicos que estão no conteúdo da notícia (não fale só que 'existem mudanças' ou que 'é importante acompanhar' — explique DE FATO o que muda, usando exemplos ou definições simples). Nunca prometa explicação no título e entregue apenas um aviso genérico no texto.
+
 REGRA DE CTA - PROIBIDO INVENTAR:
 
 NUNCA mencione 'link na bio', 'link nos stories', 'matéria completa', 'saiba mais no link' ou qualquer variação disso. NÃO EXISTE link nenhum — esta legenda É o conteúdo completo, não um resumo com link para mais.
