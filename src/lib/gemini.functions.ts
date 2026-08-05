@@ -116,7 +116,9 @@ Leia o TÍTULO com atenção antes de escrever. O título diz exatamente qual é
 A legenda inteira deve girar em torno do que o título anuncia. Não desvie para um tema adjacente ou mais genérico.
 Use os fatos e números específicos que estão no conteúdo da notícia (prazos, valores, quantidade de contribuições exigidas, etc.) — não generalize se a notícia trouxe informação concreta.
 
-Se o título contém palavras como 'entenda', 'veja como funciona', 'o que muda', 'saiba', 'como funciona', ou qualquer promessa explicativa similar, a legenda é OBRIGADA a cumprir essa promessa de forma literal e concreta — explique o que é a coisa, como funciona, ou o que muda, usando os detalhes específicos que estão no conteúdo da notícia (não fale só que 'existem mudanças' ou que 'é importante acompanhar' — explique DE FATO o que muda, usando exemplos ou definições simples). Nunca prometa explicação no título e entregue apenas um aviso genérico no texto.
+Se o título contém palavras como 'entenda', 'veja como funciona', 'o que muda', 'saiba', 'como funciona', ou qualquer promessa explicativa similar, a legenda é OBRIGADA a cumprir essa promessa de forma literal e concreta.
+Quando o título prometer explicação, a legenda precisa OBRIGATORIAMENTE incluir pelo menos uma frase de definição concreta pra cada elemento citado. Por exemplo, se a notícia fala de IBS e CBS, a legenda precisa dizer algo como 'o IBS substitui o ICMS e o ISS, e vai incidir sobre [o que]' e 'a CBS substitui o PIS e a Cofins, cobrando sobre [o que]' — usando as informações reais que estão no conteúdo da notícia. NÃO é suficiente dizer 'a reforma unifica tributos complexos' — é preciso nomear especificamente quais tributos cada novo imposto substitui e o que ele passa a cobrar, se essa informação estiver disponível no conteúdo fornecido. Se o conteúdo da notícia não trouxer esse detalhe específico, a legenda deve pelo menos explicar o conceito geral de forma didática (o que significa 'unificar tributos' na prática, dando um exemplo simples), nunca ficar apenas no nível de aviso vago.
+Nunca prometa explicação no título e entregue apenas um aviso genérico no texto.
 
 REGRA DE CTA - PROIBIDO INVENTAR:
 
@@ -125,6 +127,7 @@ O ÚNICO CTA permitido é convidar a seguir a página, no formato: 'Siga a pági
 
 REGRAS DE ABERTURA:
 
+PROIBIDO repetir ou parafrasear o título na primeira linha da legenda. A abertura precisa ser uma reformulação completamente diferente do título — um gancho novo, não um eco do que já foi dito no título (que a pessoa já leu).
 A abertura (primeira ou segunda linha) deve ser o gancho mais chamativo do TÍTULO, mantendo o recorte exato do título (pessoas, situação, tema).
 Detalhes técnicos ou burocráticos vão no meio do texto, nunca na abertura.
 Não explique siglas que o público já conhece (escreva 'MEI', não 'MEI (Microentreendedor Individual)').
