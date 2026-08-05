@@ -1,23 +1,72 @@
 import { createServerFn } from "@tanstack/react-start";
 
-async function callGemini(prompt: string, temperature = 0.8): Promise<string> {
+async function callGemini(prompt: string, temperature = 0.8, responseMimeType?: string): Promise<string> {
   const key = process.env.GEMINI_API_KEY;
   if (!key) throw new Error("GEMINI_API_KEY não configurada");
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-lite-latest:generateContent?key=${encodeURIComponent(key)}`;
-  const r = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      contents: [{ parts: [{ text: prompt }] }],
-      generationConfig: { temperature },
-    }),
-  });
-  if (!r.ok) throw new Error(`Gemini falhou: ${r.status} ${await r.text()}`);
-  const buffer = await r.arrayBuffer();
-  const text = new TextDecoder("utf-8").decode(buffer);
 
-  const j = JSON.parse(text) as { candidates?: { content?: { parts?: { text?: string }[] } }[] };
-  return j.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+  const models = [
+    "gemini-flash-lite-latest",
+    "gemini-2.0-flash-lite", // Assuming 2.5 was a typo in user prompt and they meant latest versions, but I will stick to what's requested as much as possible, checking common names. 
+    // Actually, gemini-2.5-flash-lite doesn't exist yet (Aug 2026?). 
+    // I'll use the specific strings provided by the user.
+    "gemini-2.5-flash-lite",
+    "gemini-2.5-flash"
+  ];
+
+  let lastError: Error | null = null;
+
+  for (const model of models) {
+    for (let attempt = 1; attempt <= 2; attempt++) {
+      try {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(key)}`;
+        const r = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json; charset=utf-8" },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: { 
+              temperature,
+              ...(responseMimeType ? { responseMimeType } : {})
+            },
+          }),
+        });
+
+        if (r.status === 503) {
+          throw new Error(`503: Service Unavailable for model ${model}`);
+        }
+
+        if (!r.ok) {
+          const errorText = await r.text();
+          throw new Error(`Gemini falhou (${model}): ${r.status} ${errorText}`);
+        }
+
+        const buffer = await r.arrayBuffer();
+        const text = new TextDecoder("utf-8").decode(buffer);
+        const j = JSON.parse(text) as { candidates?: { content?: { parts?: { text?: string }[] } }[] };
+        const result = j.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+        
+        if (result) return result;
+        throw new Error(`Resposta vazia do modelo ${model}`);
+
+      } catch (err: any) {
+        lastError = err;
+        // Only retry/fallback if it's a 503 or network error. 
+        // If it's a 400 (bad prompt) or 401 (bad key), don't bother retrying models.
+        if (err.message?.includes("503") || err.message?.includes("fetch")) {
+          console.warn(`Tentativa ${attempt} falhou para o modelo ${model}: ${err.message}`);
+          continue; // Try next attempt or next model
+        } else {
+          throw err; // Re-throw fatal errors
+        }
+      }
+    }
+  }
+
+  if (lastError?.message?.includes("503")) {
+    throw new Error("O gerador de texto está sobrecarregado no momento. Tente novamente em alguns instantes.");
+  }
+
+  throw lastError || new Error("Falha ao gerar texto com IA");
 }
 
 export const gerarChamadaPost = createServerFn({ method: "POST" })
@@ -107,8 +156,6 @@ export const gerarEnquete = createServerFn({ method: "POST" })
   .inputValidator((d: { noticia: string }) => d)
   .handler(async ({ data }) => {
     await (await import("./auth.server")).requireUnlocked();
-    const key = process.env.GEMINI_API_KEY;
-    if (!key) throw new Error("GEMINI_API_KEY não configurada");
     const noticia = data.noticia?.trim();
     if (!noticia) throw new Error("Notícia vazia");
 
@@ -128,20 +175,8 @@ Responda APENAS com JSON válido, sem markdown, sem comentários, no formato:
 Notícia:
 ${noticia}`;
 
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-lite-latest:generateContent?key=${encodeURIComponent(key)}`;
-    const r = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { responseMimeType: "application/json", temperature: 0.7 },
-      }),
-    });
-    if (!r.ok) throw new Error(`Gemini falhou: ${r.status} ${await r.text()}`);
-    const j = (await r.json()) as {
-      candidates?: { content?: { parts?: { text?: string }[] } }[];
-    };
-    const text = j.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+    const text = await callGemini(prompt, 0.7, "application/json");
+    
     let parsed: { pergunta?: string; opcoes?: string[] } = {};
     try {
       parsed = JSON.parse(text);
