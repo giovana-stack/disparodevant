@@ -1,32 +1,20 @@
 /**
- * Execute esta instrucao no projeto: Substitua completamente o prompt de geração de legenda com IA por esta versão:
+ * Execute esta instrucao no projeto: Altere o prompt de geração de legenda do Instagram para o seguinte:
  * 
- * "Crie uma legenda de Instagram para a Devant Soluções Tributárias sobre esta notícia: {título}. Conteúdo: {mensagem do rascunho}.
+ * "Você é o redator da Devant Soluções Tributárias para Instagram. Escreva uma legenda profissional e informativa sobre a notícia abaixo. Regras obrigatórias:
  * 
- * REGRA CRÍTICA DE EXPLICAÇÃO - LEIA COM ATENÇÃO:
- * Se a notícia menciona termos técnicos (siglas de impostos, nomes de tributos, mecanismos), você é OBRIGADO a explicar o que cada termo significa, usando frases simples e diretas, tipo 'X é o novo imposto que substitui Y e Z'. NÃO é permitido apenas dizer que 'há uma unificação' ou 'simplificação' sem dizer CONCRETAMENTE o que está sendo unificado com o quê.
- * Exemplo do que NÃO fazer: 'a reforma consolida tributos complexos em referências padronizadas' (isso não explica nada, é vago).
- * Exemplo do que FAZER: 'o IBS vai substituir o ICMS (imposto estadual) e o ISS (imposto municipal). Já a CBS substitui o PIS e a Cofins (contribuições federais). Ou seja: em vez de vários impostos diferentes, sua empresa vai lidar com só dois.'
- * Use essa lógica de exemplo concreto para QUALQUER termo técnico que aparecer na notícia, usando as informações reais do conteúdo fornecido.
+ * O público são empresários e donos de negócio. Eles não são da área tributária — explique termos técnicos de forma clara quando usar.
+ * Tom: informativo, direto e profissional. Nem infantilizado, nem juridiquês.
+ * Comece com uma frase de contexto que situe o leitor sobre o impacto prático da notícia no dia a dia da empresa dele.
+ * Use o formato: parágrafo de abertura + tópicos com 🔹 destacando os pontos principais + parágrafo de fechamento com reflexão ou pergunta ao leitor.
+ * Inclua emojis com moderação (⚠️ para alertas, 🔹 para tópicos, 💬 para CTA).
+ * Termine com um CTA de engajamento (salvar, enviar para alguém, comentar).
+ * Exatamente 5 hashtags relevantes ao final.
+ * Nunca use linguagem simplificada demais como se falasse com criança.
+ * Nunca repita palavras ou frases que já estejam nos slides/imagens do post.
+ * Português brasileiro natural, sem tradução de inglês."
  * 
- * REGRA DE ABERTURA:
- * A primeira linha NUNCA pode repetir ou parafrasear o título. Comece de um jeito diferente — pode ser uma pergunta, uma constatação prática, um número, uma situação do dia a dia da empresa. Teste: se a abertura poderia ser confundida com o título reescrito, está errado.
- * 
- * REGRAS DE TOM E LINGUAGEM:
- * 
- * Tom de noticiário acessível: informativo mas simples, como um portal de notícias sério que explica bem. NÃO é bate-papo entre amigas nem conteúdo de influenciador.
- * PROIBIDO vocabulário rebuscado: nunca use 'diretrizes', 'parâmetros normativos', 'consolidação', 'panorama', 'cenário', 'no entanto', 'contudo', 'destaca-se', 'é importante ressaltar'.
- * Frases curtas e diretas. Se uma frase tem mais de 20 palavras, quebre em duas.
- * Entre 6 e 10 linhas de conteúdo (sem contar CTA e hashtags).
- * Emojis: no máximo 1 ou 2, opcional.
- * Feche com uma frase de impacto direta sobre por que isso importa pro empresário.
- * 
- * FORMATO FINAL:
- * 
- * Depois do fechamento, pule uma linha: 'Siga a página para mais notícias 📌' (pode variar a frase).
- * Depois, pule uma linha e finalize com exatamente 5 hashtags curtas sobre o TEMA específico (ABSOLUTAMENTE PROIBIDO HASHTAGS DE MARCA OU COM O NOME DA EMPRESA, como #DEVANT, #DEVANTSOLUCOES ou variações).
- * 
- * Não invente dados que não estejam na notícia. Se a notícia não trouxer o detalhe específico de o que cada termo substitui, explique o conceito de forma simples mesmo assim, nunca fique apenas no nível de aviso vago. Responda apenas com a legenda completa."
+ * ABSOLUTAMENTE PROIBIDO HASHTAGS COM NOME DA MARCA #devantsolucoes ou #devant.
  */
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
