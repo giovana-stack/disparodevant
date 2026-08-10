@@ -6,11 +6,11 @@ async function callGemini(prompt: string, temperature = 0.8, responseMimeType?: 
 
   const models = [
     "gemini-flash-lite-latest",
-    "gemini-2.0-flash-lite", // Assuming 2.5 was a typo in user prompt and they meant latest versions, but I will stick to what's requested as much as possible, checking common names. 
-    // Actually, gemini-2.5-flash-lite doesn't exist yet (Aug 2026?). 
+    "gemini-2.0-flash-lite", // Assuming 2.5 was a typo in user prompt and they meant latest versions, but I will stick to what's requested as much as possible, checking common names.
+    // Actually, gemini-2.5-flash-lite doesn't exist yet (Aug 2026?).
     // I'll use the specific strings provided by the user.
     "gemini-2.5-flash-lite",
-    "gemini-2.5-flash"
+    "gemini-2.5-flash",
   ];
 
   let lastError: Error | null = null;
@@ -24,9 +24,9 @@ async function callGemini(prompt: string, temperature = 0.8, responseMimeType?: 
           headers: { "Content-Type": "application/json; charset=utf-8" },
           body: JSON.stringify({
             contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: { 
+            generationConfig: {
               temperature,
-              ...(responseMimeType ? { responseMimeType } : {})
+              ...(responseMimeType ? { responseMimeType } : {}),
             },
           }),
         });
@@ -44,13 +44,12 @@ async function callGemini(prompt: string, temperature = 0.8, responseMimeType?: 
         const text = new TextDecoder("utf-8").decode(buffer);
         const j = JSON.parse(text) as { candidates?: { content?: { parts?: { text?: string }[] } }[] };
         const result = j.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
-        
+
         if (result) return result;
         throw new Error(`Resposta vazia do modelo ${model}`);
-
       } catch (err: any) {
         lastError = err;
-        // Only retry/fallback if it's a 503 or network error. 
+        // Only retry/fallback if it's a 503 or network error.
         // If it's a 400 (bad prompt) or 401 (bad key), don't bother retrying models.
         if (err.message?.includes("503") || err.message?.includes("fetch")) {
           console.warn(`Tentativa ${attempt} falhou para o modelo ${model}: ${err.message}`);
@@ -78,7 +77,7 @@ export const gerarChamadaPost = createServerFn({ method: "POST" })
     const link = (data.link || "").trim();
     const origemNome = data.origem === "instagram" ? "Instagram" : "LinkedIn";
 
-    const prompt = `Você é redator da Devant Soluções Tributárias, uma consultoria tributária que fala com donos de empresa de forma clara e acessível. Leia o post abaixo (do ${origemNome}) e escreva uma chamada curta para o WhatsApp convidando a pessoa a ver o post completo no ${origemNome}.
+    const prompt = `Você é redator da Devant Soluções Tributárias, uma consultoria tributária que fala com donos de empresa de forma clara, acessível e de fácil entendimento, utilizando sempre metáforas, analogias e alusões para facilitar a compreensão da notícia. Leia o post abaixo (do ${origemNome}) e escreva uma chamada curta para o WhatsApp convidando a pessoa a ver o post completo no ${origemNome}.
 
 Regras obrigatórias:
 1. Português brasileiro natural e simples, tom de conversa, sem juridiquês.
@@ -108,16 +107,15 @@ export const gerarLegendaInstagram = createServerFn({ method: "POST" })
     const titulo = data.titulo?.trim();
     const mensagem = data.mensagem?.trim();
     if (!titulo) throw new Error("Título vazio");
-    const prompt = `Você é o redator da Devant Soluções Tributárias para Instagram. Escreva uma legenda profissional e informativa sobre a notícia abaixo. Regras obrigatórias:
+    const prompt = `Você é o redator da Devant Soluções Tributárias para Instagram, uma consultoria tributária que fala com donos de empresa de forma clara, acessível e de fácil entendimento, utilizando sempre metáforas, analogias e alusões para facilitar a compreensão da notícia. Escreva uma legenda profissional e informativa sobre a notícia abaixo. Regras obrigatórias:
 
 O público são empresários e donos de negócio. Eles não são da área tributária — explique termos técnicos de forma clara quando usar.
-Tom: informativo, direto e profissional. Nem infantilizado, nem juridiquês.
-Comece com uma frase de contexto que situe o leitor sobre o impacto prático da notícia no dia a dia da empresa dele.
-Use o formato: parágrafo de abertura + tópicos com 🔹 destacando os pontos principais + parágrafo de fechamento com reflexão ou pergunta ao leitor.
-Inclua emojis com moderação (⚠️ para alertas, 🔹 para tópicos, 💬 para CTA).
+Tom: informativo, direto e profissional, evitando ao máximo ser prolixo e usar termos técnicos.
+Comece com uma frase que contextualize os impactos da notícia no dia a dia do leitor-empresário.
+Use o formato: frase de contexto + parágrafo de abertura + tópicos com 🔹 destacando os pontos principais + parágrafo de fechamento + frase com reflexão ou pergunta ao leitor.
+Inclua emojis com moderação.
 Termine com um CTA de engajamento (salvar, enviar para alguém, comentar).
 Exatamente 5 hashtags relevantes ao final.
-Nunca use linguagem simplificada demais como se falasse com criança.
 Nunca repita palavras ou frases que já estejam nos slides/imagens do post.
 Português brasileiro natural, sem tradução de inglês.
 ABSOLUTAMENTE PROIBIDO HASHTAGS DE MARCA OU COM O NOME DA EMPRESA, como #DEVANT, #DEVANTSOLUCOES ou variações.
@@ -129,8 +127,6 @@ Conteúdo: ${mensagem || ""}`;
     if (!legenda) throw new Error("Resposta do Gemini vazia");
     return { legenda };
   });
-
-
 
 export const gerarEnquete = createServerFn({ method: "POST" })
   .inputValidator((d: { noticia: string }) => d)
@@ -156,7 +152,7 @@ Notícia:
 ${noticia}`;
 
     const text = await callGemini(prompt, 0.7, "application/json");
-    
+
     let parsed: { pergunta?: string; opcoes?: string[] } = {};
     try {
       parsed = JSON.parse(text);
@@ -166,7 +162,10 @@ ${noticia}`;
     }
     const pergunta = (parsed.pergunta || "").toString().trim();
     const opcoes = Array.isArray(parsed.opcoes)
-      ? parsed.opcoes.map((o) => String(o).trim()).filter(Boolean).slice(0, 4)
+      ? parsed.opcoes
+          .map((o) => String(o).trim())
+          .filter(Boolean)
+          .slice(0, 4)
       : [];
     if (!pergunta || opcoes.length < 3) throw new Error("Resposta do Gemini inválida");
     return { pergunta, opcoes };
