@@ -390,6 +390,11 @@ export function InstagramTab() {
                 rows={7}
                 value={legenda}
                 onChange={(e) => setLegenda(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                  }
+                }}
                 placeholder="Escreva ou gere a legenda..."
               />
               <Button

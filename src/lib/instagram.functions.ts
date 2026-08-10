@@ -127,7 +127,7 @@ export const listPostagensInstagram = createServerFn({ method: "GET" }).handler(
   const s = await supa();
   const { data, error } = await s
     .from("postagens_instagram")
-    .select("id, titulo, legenda, imagem_url, agendado_para, status")
+    .select("id, titulo, legenda, imagem_url, agendado_para, status, rascunho_id")
     .in("status", ["agendado", "publicado"])
     .order("agendado_para", { ascending: false });
   if (error) throw new Error(error.message);
@@ -138,8 +138,57 @@ export const listPostagensInstagram = createServerFn({ method: "GET" }).handler(
     imagem_url: string | null;
     agendado_para: string | null;
     status: string;
+    rascunho_id: string | number | null;
   }>;
 });
+
+export const cancelarAgendamento = createServerFn({ method: "POST" })
+  .inputValidator((d: { id: string | number; novoStatus?: string }) => d)
+  .handler(async ({ data }) => {
+    await (await import("./auth.server")).requireUnlocked();
+    const s = await supa();
+    const { error } = await s
+      .from("postagens_instagram")
+      .update({ status: data.novoStatus || "cancelado" })
+      .eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true as const };
+  });
+
+export const atualizarDataAgendamento = createServerFn({ method: "POST" })
+  .inputValidator((d: { id: string | number; novaData: string }) => d)
+  .handler(async ({ data }) => {
+    await (await import("./auth.server")).requireUnlocked();
+    const s = await supa();
+    const { error } = await s
+      .from("postagens_instagram")
+      .update({ agendado_para: data.novaData })
+      .eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true as const };
+  });
+
+export const excluirNoticiaOriginal = createServerFn({ method: "POST" })
+  .inputValidator((d: { id: string | number; rascunho_id: string | number | null }) => d)
+  .handler(async ({ data }) => {
+    await (await import("./auth.server")).requireUnlocked();
+    const s = await supa();
+    
+    // 1. Deletar da postagens_instagram
+    const { error: err1 } = await s.from("postagens_instagram").delete().eq("id", data.id);
+    if (err1) throw new Error(err1.message);
+
+    // 2. Se tiver rascunho_id, atualizar rascunho para descartado (ou deletar se preferir, mas descartado é o padrão do app)
+    if (data.rascunho_id) {
+      const { error: err2 } = await s
+        .from("rascunhos")
+        .update({ status: "descartado" })
+        .eq("id", data.rascunho_id);
+      if (err2) console.error("Erro ao descartar rascunho:", err2.message);
+    }
+
+    return { ok: true as const };
+  });
 
 export const listPostagensPublicadas = createServerFn({ method: "GET" }).handler(async () => {
   await (await import("./auth.server")).requireUnlocked();

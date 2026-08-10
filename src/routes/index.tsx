@@ -24,7 +24,6 @@ import { toast } from "sonner";
 import {
   Newspaper,
   BarChart3,
-  Link2,
   Instagram as InstagramIcon,
   LogOut,
   Loader2,
@@ -36,6 +35,7 @@ import {
   MessageCircle,
   RefreshCw,
   Clock,
+  CalendarDays,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -62,6 +62,7 @@ import {
 import { gerarEnquete, gerarChamadaPost } from "@/lib/gemini.functions";
 import { listPostagensPublicadas } from "@/lib/instagram.functions";
 import { InstagramTab } from "@/components/InstagramTab";
+import { AgendadosTab } from "@/components/AgendadosTab";
 
 export const Route = createFileRoute("/")({
   loader: () => getAuthState(),
@@ -169,8 +170,8 @@ function AppShell() {
             <TabsTrigger value="enquete" className="flex-col gap-0.5 py-2 text-[11px]">
               <BarChart3 className="w-4 h-4" /> Enquete
             </TabsTrigger>
-            <TabsTrigger value="post" className="flex-col gap-0.5 py-2 text-[11px]">
-              <Link2 className="w-4 h-4" /> Post
+            <TabsTrigger value="agendados" className="flex-col gap-0.5 py-2 text-[11px]">
+              <CalendarDays className="w-4 h-4" /> Agendados
             </TabsTrigger>
             <TabsTrigger value="instagram" className="flex-col gap-0.5 py-2 text-[11px]">
               <InstagramIcon className="w-4 h-4" /> Instagram
@@ -183,8 +184,8 @@ function AppShell() {
           <TabsContent value="enquete" className="mt-4">
             <EnqueteTab />
           </TabsContent>
-          <TabsContent value="post" className="mt-4">
-            <PostTab />
+          <TabsContent value="agendados" className="mt-4">
+            <AgendadosTab />
           </TabsContent>
           <TabsContent value="instagram" className="mt-4">
             <InstagramTab />
