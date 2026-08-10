@@ -25,8 +25,9 @@ import {
   enviarWebhookMake,
 } from "@/lib/instagram.functions";
 
-const VERDE_ESCURO = "rgba(25, 42, 37, 0.75)";
-const VERDE_TAG = "#059A8E";
+const VERDE_ESCURO = "#192A25";
+const VERDE_TAG = "#2ABFBF";
+const OVERLAY_COR = "rgba(25, 42, 37, 0.75)";
 
 
 
@@ -240,15 +241,16 @@ export function InstagramTab() {
                 ref={previewRef}
                 style={{
                   position: "relative",
-                  width: 540,
-                  height: 675,
+                  width: 540, // 1080 / 2
+                  height: 675, // 1350 / 2
                   flex: "0 0 auto",
                   overflow: "hidden",
                   fontFamily: "'Montserrat', Arial, sans-serif",
-                  background: "#0F172A",
+                  background: VERDE_ESCURO,
+                  border: `12px solid ${VERDE_TAG}`,
                 }}
               >
-                {/* Camada 1: fundo */}
+                {/* Camada 1: fundo (imagem do usuário) */}
                 <img
                   src={imagem}
                   alt=""
@@ -261,13 +263,10 @@ export function InstagramTab() {
                     objectFit: "cover",
                   }}
                 />
-                {/* Camada 2: overlay */}
-                <div style={{ position: "absolute", inset: 0, background: VERDE_ESCURO }} />
-                {/* Camada 3: faixa de acento topo */}
-                <div
-                  style={{ position: "absolute", top: 0, left: 0, right: 0, height: 6, background: VERDE_TAG }}
-                />
-                {/* Camada 4: tag NOTÍCIA */}
+                {/* Camada 2: overlay escuro */}
+                <div style={{ position: "absolute", inset: 0, background: OVERLAY_COR }} />
+
+                {/* Camada 3: tag NOTÍCIA topo central */}
                 <div
                   style={{
                     position: "absolute",
@@ -284,102 +283,112 @@ export function InstagramTab() {
                       color: "#FFFFFF",
                       fontFamily: "'Montserrat', Arial, sans-serif",
                       fontWeight: 800,
-                      fontSize: 18,
+                      fontSize: 16,
                       letterSpacing: 2,
-                      padding: "8px 22px",
+                      padding: "6px 20px",
                       borderRadius: 999,
                     }}
                   >
                     NOTÍCIA
                   </span>
                 </div>
-                {/* Camadas 5-8: bloco central (título + linhas + isotipo) */}
+
+                {/* Camada 4: Título centralizado (levemente acima do meio) */}
                 <div
                   style={{
                     position: "absolute",
-                    top: 90,
+                    top: 0,
                     left: 0,
                     right: 0,
-                    bottom: 100,
+                    bottom: 120,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    padding: "0 40px",
+                  }}
+                >
+                  <div
+                    contentEditable
+                    suppressContentEditableWarning
+                    onBlur={(e) => setTitulo(e.currentTarget.innerText)}
+                    style={{
+                      color: "#FFFFFF",
+                      fontFamily: "'Montserrat', Arial, sans-serif",
+                      fontWeight: 900,
+                      fontSize: 36,
+                      lineHeight: 1.1,
+                      textAlign: "center",
+                      textTransform: "uppercase",
+                      outline: "none",
+                      width: "100%",
+                    }}
+                  >
+                    {titulo}
+                  </div>
+                </div>
+
+                {/* Camada 5: Rodapé Devant */}
+                <div
+                  style={{
+                    position: "absolute",
+                    bottom: 40,
+                    left: 0,
+                    right: 0,
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
-                    justifyContent: "center",
-                    gap: 28,
+                    gap: 12,
                   }}
                 >
-                  {/* Camada 5: título editável */}
-                  <div
-                    style={{
-                      width: "100%",
-                      paddingLeft: 44,
-                      paddingRight: 44,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <div
-                      contentEditable
-                      suppressContentEditableWarning
-                      onBlur={(e) => setTitulo(e.currentTarget.innerText)}
-                      style={{
-                        color: "#FFFFFF",
-                        fontFamily: "'Montserrat', Arial, sans-serif",
-                        fontWeight: 700,
-                        fontSize: 40,
-                        lineHeight: 1.2,
-                        textAlign: "center",
-                        textShadow: "0 2px 12px rgba(0,0,0,0.55)",
-                        outline: "none",
-                        width: "100%",
-                      }}
-                    >
-                      {titulo}
-                    </div>
-                  </div>
-                  {/* Camadas 6-8: linhas decorativas + isotipo */}
+                  {/* Linhas decorativas + ícone */}
                   <div
                     style={{
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
                       gap: 16,
+                      width: "100%",
+                      padding: "0 60px",
                     }}
                   >
-                    <div style={{ width: 150, height: 2, background: "#C4A35A" }} />
+                    <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.3)" }} />
                     <img
                       src="https://adgcnounhstuqwpvfpgp.supabase.co/storage/v1/object/public/imagens/isotipo-branco.png"
                       alt=""
                       crossOrigin="anonymous"
-                      style={{ width: 50, height: 50, opacity: 0.9, objectFit: "contain" }}
+                      style={{ width: 32, height: 32, objectFit: "contain" }}
                     />
-                    <div style={{ width: 150, height: 2, background: "#C4A35A" }} />
+                    <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.3)" }} />
+                  </div>
+                  
+                  {/* Texto DEVANT */}
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 0 }}>
+                    <div
+                      style={{
+                        color: "#FFFFFF",
+                        fontFamily: "'Montserrat', Arial, sans-serif",
+                        fontWeight: 800,
+                        fontSize: 20,
+                        letterSpacing: 4,
+                        lineHeight: 1,
+                      }}
+                    >
+                      DEVANT
+                    </div>
+                    <div
+                      style={{
+                        color: "#FFFFFF",
+                        fontFamily: "'Montserrat', Arial, sans-serif",
+                        fontWeight: 400,
+                        fontSize: 10,
+                        letterSpacing: 1,
+                        opacity: 0.8,
+                      }}
+                    >
+                      SOLUÇÕES TRIBUTÁRIAS
+                    </div>
                   </div>
                 </div>
-                {/* Camada 9-10: logo no rodapé (sem barra de fundo) */}
-                <div
-                  style={{
-                    position: "absolute",
-                    left: 0,
-                    right: 0,
-                    bottom: 24,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <img
-                    src="https://adgcnounhstuqwpvfpgp.supabase.co/storage/v1/object/public/imagens/devant.png"
-                    alt=""
-                    crossOrigin="anonymous"
-                    style={{ width: 180, opacity: 0.95, objectFit: "contain" }}
-                  />
-                </div>
-                {/* Camada 11: faixa de acento base */}
-                <div
-                  style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 6, background: VERDE_TAG }}
-                />
               </div>
             </div>
 
