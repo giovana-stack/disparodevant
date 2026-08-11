@@ -501,6 +501,12 @@ function PostTab() {
   const [textoPost, setTextoPost] = useState("");
   const [chamada, setChamada] = useState("");
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+    }
+  };
+
   const gerarMut = useMutation({
     mutationFn: () => gerarFn({ data: { origem, texto: textoPost, link } }),
     onSuccess: (r) => {
@@ -547,6 +553,7 @@ function PostTab() {
             type="url"
             value={link}
             onChange={(e) => setLink(e.target.value)}
+            onKeyDown={handleKeyDown}
             placeholder="https://..."
           />
         </div>
@@ -557,6 +564,7 @@ function PostTab() {
             rows={6}
             value={textoPost}
             onChange={(e) => setTextoPost(e.target.value)}
+            onKeyDown={handleKeyDown}
             placeholder="Cole o conteúdo/legenda completa do post..."
           />
           <Button
@@ -580,6 +588,7 @@ function PostTab() {
             rows={4}
             value={chamada}
             onChange={(e) => setChamada(e.target.value)}
+            onKeyDown={handleKeyDown}
             placeholder="Escreva a chamada que acompanhará o link..."
           />
         </div>
