@@ -443,6 +443,11 @@ export function InstagramTab() {
                 rows={4}
                 value={resumo}
                 onChange={(e) => setResumo(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                  }
+                }}
                 placeholder="Resumo que será enviado..."
               />
               <Button

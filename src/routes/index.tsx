@@ -123,6 +123,11 @@ function Login({ onUnlocked }: { onUnlocked: () => void }) {
                 autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !password) {
+                    e.preventDefault();
+                  }
+                }}
                 required
               />
             </div>
@@ -238,6 +243,12 @@ function NoticiasTab() {
       )}
     </Button>
   );
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+    }
+  };
 
   if (q.isLoading) return <div className="space-y-3">{buscarBtn}<Loading /></div>;
   if (q.error) return <div className="space-y-3">{buscarBtn}<ErrorBox error={q.error} /></div>;
@@ -434,6 +445,7 @@ function EnqueteTab() {
               rows={2}
               value={pergunta}
               onChange={(e) => setPergunta(e.target.value)}
+              onKeyDown={handleKeyDown}
               placeholder="Ex.: O que você achou dessa notícia?"
             />
           </div>
@@ -444,6 +456,7 @@ function EnqueteTab() {
                 <Input
                   value={o}
                   onChange={(e) => setOpcao(i, e.target.value)}
+                  onKeyDown={handleKeyDown}
                   placeholder={`Opção ${i + 1}`}
                 />
                 {opcoes.length > 2 && (
