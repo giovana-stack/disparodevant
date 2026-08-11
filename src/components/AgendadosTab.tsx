@@ -53,7 +53,8 @@ export function AgendadosTab() {
         data: { 
           titulo: post.titulo || "", 
           imagem_fundo_url: post.imagem_url || "", 
-          legenda: post.legenda || "" 
+          legenda: post.legenda || "",
+          resumo_whats: post.resumo_whats || ""
         } 
       });
       // Marcar como publicado no banco local (cancelar o agendado)
