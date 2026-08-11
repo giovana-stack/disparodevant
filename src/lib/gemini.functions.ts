@@ -128,6 +128,25 @@ Conteúdo: ${mensagem || ""}`;
     return { legenda };
   });
 
+export const gerarResumoWhatsApp = createServerFn({ method: "POST" })
+  .inputValidator((d: { titulo: string; legenda: string }) => d)
+  .handler(async ({ data }) => {
+    await (await import("./auth.server")).requireUnlocked();
+    const titulo = data.titulo?.trim();
+    const legenda = data.legenda?.trim();
+    if (!titulo) throw new Error("Título vazio");
+    
+    const prompt = `Resuma o post abaixo em no máximo 5 linhas curtas para WhatsApp. Linguagem simples, tom de conversa. Sem hashtags. Sem link da notícia. Sem CTA de seguir a página. Termine com: Leia mais no nosso Instagram 👇. Use emojis com moderação.
+
+Título: ${titulo}
+Post: ${legenda || ""}`;
+
+    const raw = (await callGemini(prompt, 0.8)).trim();
+    const resumo = raw.replace(/^["'`]+|["'`]+$/g, "").trim();
+    if (!resumo) throw new Error("Resposta do Gemini vazia");
+    return { resumo };
+  });
+
 export const gerarEnquete = createServerFn({ method: "POST" })
   .inputValidator((d: { noticia: string }) => d)
   .handler(async ({ data }) => {

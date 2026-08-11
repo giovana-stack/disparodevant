@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/select";
 
 import { listSentNoticias, marcarRascunhoEnviado } from "@/lib/rascunhos.functions";
-import { gerarLegendaInstagram } from "@/lib/gemini.functions";
+import { gerarLegendaInstagram, gerarResumoWhatsApp } from "@/lib/gemini.functions";
 import {
   uploadImagemPost,
   salvarPostagemInstagram,
@@ -38,6 +38,7 @@ export function InstagramTab() {
   const listFn = useServerFn(listSentNoticias);
   const legendaFn = useServerFn(gerarLegendaInstagram);
   const uploadFn = useServerFn(uploadImagemPost);
+  const resumoFn = useServerFn(gerarResumoWhatsApp);
   const salvarFn = useServerFn(salvarPostagemInstagram);
   const webhookFn = useServerFn(enviarWebhookMake);
   const marcarEnviadoFn = useServerFn(marcarRascunhoEnviado);
@@ -50,9 +51,11 @@ export function InstagramTab() {
   const [imagem, setImagem] = useState<string | null>(null);
   const [legenda, setLegenda] = useState("");
   const [imagemUrl, setImagemUrl] = useState<string | null>(null);
+  const [resumo, setResumo] = useState("");
   const [agendadoPara, setAgendadoPara] = useState("");
   const [mostrarAgendar, setMostrarAgendar] = useState(false);
   const [gerando, setGerando] = useState(false);
+  const [gerandoResumo, setGerandoResumo] = useState(false);
   const [salvando, setSalvando] = useState<null | "agendar" | "agora">(null);
 
 
@@ -106,6 +109,20 @@ export function InstagramTab() {
     }
   }
 
+  async function gerarResumo() {
+    if (!titulo.trim()) return;
+    setGerandoResumo(true);
+    try {
+      const r = await resumoFn({ data: { titulo, legenda } });
+      setResumo(r.resumo);
+      toast.success("Resumo gerado!");
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setGerandoResumo(false);
+    }
+  }
+
   async function subirImagemFundo(): Promise<string> {
     if (imagemUrl) return imagemUrl;
     if (!imagem) throw new Error("Envie a imagem de fundo");
@@ -116,6 +133,7 @@ export function InstagramTab() {
 
   function limpar() {
     setLegenda("");
+    setResumo("");
     setImagem(null);
     setImagemUrl(null);
     setAgendadoPara("");
@@ -142,7 +160,7 @@ export function InstagramTab() {
     try {
       const url = await subirImagemFundo();
       if (modo === "agora") {
-        await webhookFn({ data: { titulo: titulo.trim(), imagem_fundo_url: url, legenda: legenda.trim() } });
+        await webhookFn({ data: { titulo: titulo.trim(), imagem_fundo_url: url, legenda: legenda.trim(), resumo_whats: resumo.trim() } });
         if (noticia?.id) {
           await marcarEnviadoFn({ data: { id: noticia.id } });
         }
@@ -152,6 +170,7 @@ export function InstagramTab() {
             titulo,
             imagem_url: url,
             legenda,
+            resumo_whats: resumo,
             agendado_para: new Date(agendadoPara).toISOString(),
             status: "agendado",
             rascunho_id: noticia?.id ?? null,
@@ -414,6 +433,26 @@ export function InstagramTab() {
                 onClick={gerarLegenda}
               >
                 {gerando ? <Loader2 className="w-4 h-4 animate-spin" /> : "Gerar legenda com IA"}
+              </Button>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="ig-resumo">Resumo para WhatsApp</Label>
+              <Textarea
+                id="ig-resumo"
+                rows={4}
+                value={resumo}
+                onChange={(e) => setResumo(e.target.value)}
+                placeholder="Resumo que será enviado..."
+              />
+              <Button
+                type="button"
+                variant="secondary"
+                className="w-full"
+                disabled={gerandoResumo || !titulo.trim()}
+                onClick={gerarResumo}
+              >
+                {gerandoResumo ? <Loader2 className="w-4 h-4 animate-spin" /> : "Gerar resumo WhatsApp"}
               </Button>
             </div>
 
