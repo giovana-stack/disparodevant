@@ -182,6 +182,11 @@ export function AgendadosTab() {
                           <Input 
                             type="datetime-local" 
                             value={editingPost?.date || ""}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                e.preventDefault();
+                              }
+                            }}
                             onChange={(e) => setEditingPost(prev => prev ? { ...prev, date: e.target.value } : null)}
                           />
                         </div>
