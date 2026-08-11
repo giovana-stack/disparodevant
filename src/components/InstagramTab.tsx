@@ -233,7 +233,7 @@ export function InstagramTab() {
               value={manual ? titulo : ""}
               placeholder="Digite o título do post..."
               onKeyDown={(e) => {
-                if (e.key === "Enter") e.preventDefault();
+                if (e.key === "Enter" && !e.shiftKey) e.preventDefault();
               }}
               onChange={(e) => {
                 setManual(true);
@@ -334,7 +334,7 @@ export function InstagramTab() {
                     suppressContentEditableWarning
                     onBlur={(e) => setTitulo(e.currentTarget.innerText)}
                     onKeyDown={(e) => {
-                      if (e.key === "Enter") {
+                      if (e.key === "Enter" && !e.shiftKey) {
                         e.preventDefault();
                       }
                     }}
@@ -427,7 +427,7 @@ export function InstagramTab() {
                 value={legenda}
                 onChange={(e) => setLegenda(e.target.value)}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter") {
+                  if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
                   }
                 }}
@@ -452,7 +452,7 @@ export function InstagramTab() {
                 value={resumo}
                 onChange={(e) => setResumo(e.target.value)}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter") {
+                  if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
                   }
                 }}

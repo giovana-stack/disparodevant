@@ -230,11 +230,6 @@ function NoticiasTab() {
     }
   }
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-    }
-  };
 
   const buscarBtn = (
     <Button onClick={buscar} disabled={buscando} className="w-full">
@@ -349,11 +344,6 @@ function EnqueteTab() {
   const [gerando, setGerando] = useState(false);
   const [disparando, setDisparando] = useState(false);
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-    }
-  };
 
   function setOpcao(i: number, v: string) {
     setOpcoes((prev) => prev.map((o, idx) => (idx === i ? v : o)));
@@ -452,7 +442,6 @@ function EnqueteTab() {
               rows={2}
               value={pergunta}
               onChange={(e) => setPergunta(e.target.value)}
-              onKeyDown={handleKeyDown}
               placeholder="Ex.: O que você achou dessa notícia?"
             />
           </div>
@@ -463,7 +452,6 @@ function EnqueteTab() {
                 <Input
                   value={o}
                   onChange={(e) => setOpcao(i, e.target.value)}
-                  onKeyDown={handleKeyDown}
                   placeholder={`Opção ${i + 1}`}
                 />
                 {opcoes.length > 2 && (
@@ -508,11 +496,6 @@ function PostTab() {
   const [textoPost, setTextoPost] = useState("");
   const [chamada, setChamada] = useState("");
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-    }
-  };
 
   const gerarMut = useMutation({
     mutationFn: () => gerarFn({ data: { origem, texto: textoPost, link } }),
@@ -560,7 +543,6 @@ function PostTab() {
             type="url"
             value={link}
             onChange={(e) => setLink(e.target.value)}
-            onKeyDown={handleKeyDown}
             placeholder="https://..."
           />
         </div>
@@ -571,7 +553,6 @@ function PostTab() {
             rows={6}
             value={textoPost}
             onChange={(e) => setTextoPost(e.target.value)}
-            onKeyDown={handleKeyDown}
             placeholder="Cole o conteúdo/legenda completa do post..."
           />
           <Button
@@ -595,7 +576,7 @@ function PostTab() {
             rows={4}
             value={chamada}
             onChange={(e) => setChamada(e.target.value)}
-            onKeyDown={handleKeyDown}
+            
             placeholder="Escreva a chamada que acompanhará o link..."
           />
         </div>
