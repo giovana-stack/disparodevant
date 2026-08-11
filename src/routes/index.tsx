@@ -348,6 +348,12 @@ function EnqueteTab() {
   const [gerando, setGerando] = useState(false);
   const [disparando, setDisparando] = useState(false);
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+    }
+  };
+
   function setOpcao(i: number, v: string) {
     setOpcoes((prev) => prev.map((o, idx) => (idx === i ? v : o)));
   }
