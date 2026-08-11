@@ -232,6 +232,9 @@ export function InstagramTab() {
               id="ig-titulo-manual"
               value={manual ? titulo : ""}
               placeholder="Digite o título do post..."
+              onKeyDown={(e) => {
+                if (e.key === "Enter") e.preventDefault();
+              }}
               onChange={(e) => {
                 setManual(true);
                 setSelecionada("");
@@ -330,6 +333,11 @@ export function InstagramTab() {
                     contentEditable
                     suppressContentEditableWarning
                     onBlur={(e) => setTitulo(e.currentTarget.innerText)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                      }
+                    }}
                     style={{
                       color: "#FFFFFF",
                       fontFamily: "'Montserrat', Arial, sans-serif",
