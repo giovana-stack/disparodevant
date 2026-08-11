@@ -223,12 +223,18 @@ function NoticiasTab() {
       console.error("Erro completo na busca:", e);
       const msg = (e as Error)?.message || JSON.stringify(e);
       toast.error(`Erro ao buscar notícias: ${msg}`, {
-        duration: 10000, // Duração maior para o usuário conseguir ler o erro completo
+        duration: 10000,
       });
     } finally {
       setBuscando(false);
     }
   }
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+    }
+  };
 
   const buscarBtn = (
     <Button onClick={buscar} disabled={buscando} className="w-full">
@@ -244,11 +250,6 @@ function NoticiasTab() {
     </Button>
   );
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-    }
-  };
 
   if (q.isLoading) return <div className="space-y-3">{buscarBtn}<Loading /></div>;
   if (q.error) return <div className="space-y-3">{buscarBtn}<ErrorBox error={q.error} /></div>;
