@@ -1,6 +1,5 @@
 /**
- * Execute esta instrucao no projeto: Altere o prompt de geração de legenda do Instagram para o seguinte:
- * 
+ * Prompt de geração de legenda do Instagram:
  * "Você é o redator da Devant Soluções Tributárias para Instagram. Escreva uma legenda profissional e informativa sobre a notícia abaixo. Regras obrigatórias:
  * 
  * O público são empresários e donos de negócio. Eles não são da área tributária — explique termos técnicos de forma clara quando usar.
@@ -15,6 +14,9 @@
  * Português brasileiro natural, sem tradução de inglês."
  * 
  * ABSOLUTAMENTE PROIBIDO HASHTAGS COM NOME DA MARCA #devantsolucoes ou #devant.
+ * 
+ * Prompt de resumo para WhatsApp:
+ * "Resuma o post abaixo em no máximo 5 linhas curtas para WhatsApp. Linguagem simples, tom de conversa. Sem hashtags. Sem link da notícia. Sem CTA de seguir a página. Termine com: Leia mais no nosso Instagram 👇. Use emojis com moderação."
  */
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
