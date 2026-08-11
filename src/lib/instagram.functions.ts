@@ -39,6 +39,7 @@ export const salvarPostagemInstagram = createServerFn({ method: "POST" })
       titulo: string;
       imagem_url: string;
       legenda: string;
+      resumo_whats?: string;
       agendado_para: string;
       status: "agendado" | "publicar_agora";
       rascunho_id?: string | number | null;
@@ -53,6 +54,7 @@ export const salvarPostagemInstagram = createServerFn({ method: "POST" })
       titulo: data.titulo,
       imagem_url: data.imagem_url,
       legenda: data.legenda,
+      resumo_whats: data.resumo_whats || null,
       agendado_para: data.agendado_para,
       status: data.status,
       rascunho_id: data.rascunho_id ?? null,
@@ -62,7 +64,7 @@ export const salvarPostagemInstagram = createServerFn({ method: "POST" })
   });
 
 export const enviarWebhookMake = createServerFn({ method: "POST" })
-  .inputValidator((d: { titulo: string; imagem_fundo_url: string; legenda: string }) => d)
+  .inputValidator((d: { titulo: string; imagem_fundo_url: string; legenda: string; resumo_whats?: string }) => d)
   .handler(async ({ data }) => {
     await (await import("./auth.server")).requireUnlocked();
     const url = process.env.APPS_SCRIPT_URL;
@@ -86,6 +88,7 @@ export const enviarWebhookMake = createServerFn({ method: "POST" })
           titulo: String(data.titulo),
           imagem_fundo_url: String(data.imagem_fundo_url),
           legenda: String(data.legenda),
+          resumo_whats: String(data.resumo_whats || ""),
         }),
         redirect: "follow",
         signal: controller.signal,
@@ -127,7 +130,7 @@ export const listPostagensInstagram = createServerFn({ method: "GET" }).handler(
   const s = await supa();
   const { data, error } = await s
     .from("postagens_instagram")
-    .select("id, titulo, legenda, imagem_url, agendado_para, status, rascunho_id")
+    .select("id, titulo, legenda, resumo_whats, imagem_url, agendado_para, status, rascunho_id")
     .in("status", ["agendado", "publicado"])
     .order("agendado_para", { ascending: false });
   if (error) throw new Error(error.message);
@@ -135,6 +138,7 @@ export const listPostagensInstagram = createServerFn({ method: "GET" }).handler(
     id: string | number;
     titulo: string | null;
     legenda: string | null;
+    resumo_whats: string | null;
     imagem_url: string | null;
     agendado_para: string | null;
     status: string;
