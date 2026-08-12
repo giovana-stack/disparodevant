@@ -80,10 +80,10 @@ export const gerarChamadaPost = createServerFn({ method: "POST" })
     const prompt = `Você é redator da Devant Soluções Tributárias, uma consultoria tributária que fala com donos de empresa de forma clara, acessível e de fácil entendimento, utilizando sempre metáforas, analogias e alusões para facilitar a compreensão da notícia. Leia o post abaixo (do ${origemNome}) e escreva uma chamada curta para o WhatsApp convidando a pessoa a ver o post completo no ${origemNome}.
 
 Regras obrigatórias:
-1. Português brasileiro natural e simples, tom de conversa, sem juridiquês.
-2. Entre 2 e 4 linhas curtas.
-3. Pode usar poucos emojis (no máximo 2), sem exagero.
-4. Desperte curiosidade destacando o ponto mais interessante do post, sem entregar tudo.
+1. Português brasileiro natural e simples, tom de conversa, sem linguagem excessivamente formal e sem termos técnicos.
+2. Entre 3 e 7 linhas curtas.
+3. A primeira linha deve, obrigatoriamente, incluir um emoji relacionado ao assunto
+4. Na primeira linha, destaque o ponto mais interessante do post, sem entregar tudo.
 5. NÃO inclua link nenhum — o link é adicionado depois automaticamente.
 6. Varie a forma de abrir, nada de fórmulas repetidas ("Você sabia que...", "Confira...").
 7. Termine convidando a ver o post completo no ${origemNome}.
@@ -110,12 +110,12 @@ export const gerarLegendaInstagram = createServerFn({ method: "POST" })
     const prompt = `Você é o redator da Devant Soluções Tributárias para Instagram, uma consultoria tributária que fala com donos de empresa de forma clara, acessível e de fácil entendimento, utilizando sempre metáforas, analogias e alusões para facilitar a compreensão da notícia. Escreva uma legenda profissional e informativa sobre a notícia abaixo. Regras obrigatórias:
 
 O público são empresários e donos de negócio. Eles não são da área tributária — explique termos técnicos de forma clara quando usar.
-Tom: informativo, direto e profissional, evitando ao máximo ser prolixo e usar termos técnicos.
-Comece com uma frase que contextualize os impactos da notícia no dia a dia do leitor-empresário.
-Use o formato: frase de contexto + parágrafo de abertura + tópicos com 🔹 destacando os pontos principais + parágrafo de fechamento + frase com reflexão ou pergunta ao leitor.
+Tom: informativo, direto e profissional, evitando ao máximo ser prolixo, excessivamente formal ou usar termos écnicos.
+Comece com uma frase que chame a atenção do empresário para o fator mais importante da notícia
+Use o formato: frase chamativa + parágrafo de abertura + tópicos com 🔹 destacando os pontos principais + parágrafo de fechamento + frase com reflexão ou pergunta ao leitor.
 Inclua emojis com moderação.
 Termine com um CTA de engajamento (salvar, enviar para alguém, comentar).
-Exatamente 5 hashtags relevantes ao final.
+Exatamente 5 hashtags relacionadas ao assunto da notícia no final.
 Nunca repita palavras ou frases que já estejam nos slides/imagens do post.
 Português brasileiro natural, sem tradução de inglês.
 ABSOLUTAMENTE PROIBIDO HASHTAGS DE MARCA OU COM O NOME DA EMPRESA, como #DEVANT, #DEVANTSOLUCOES ou variações.
@@ -135,7 +135,7 @@ export const gerarResumoWhatsApp = createServerFn({ method: "POST" })
     const titulo = data.titulo?.trim();
     const legenda = data.legenda?.trim();
     if (!titulo) throw new Error("Título vazio");
-    
+
     const prompt = `Resuma o post abaixo em no máximo 5 linhas curtas para WhatsApp. Linguagem simples, tom de conversa. Sem hashtags. Sem link da notícia. Sem CTA de seguir a página. Termine com: Leia mais no nosso Instagram 👇. Use emojis com moderação.
 
 Título: ${titulo}
