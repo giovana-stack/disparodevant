@@ -4,14 +4,7 @@ async function callGemini(prompt: string, temperature = 0.8, responseMimeType?: 
   const key = process.env.GEMINI_API_KEY;
   if (!key) throw new Error("GEMINI_API_KEY não configurada");
 
-  const models = [
-    "gemini-flash-lite-latest",
-    "gemini-2.0-flash-lite", // Assuming 2.5 was a typo in user prompt and they meant latest versions, but I will stick to what's requested as much as possible, checking common names.
-    // Actually, gemini-2.5-flash-lite doesn't exist yet (Aug 2026?).
-    // I'll use the specific strings provided by the user.
-    "gemini-2.5-flash-lite",
-    "gemini-2.5-flash",
-  ];
+  const models = ["gemini-flash-lite-latest", "gemini-3.5-flash-lite", "gemini-3.6-flash"];
 
   let lastError: Error | null = null;
 
@@ -101,16 +94,23 @@ ${texto}`;
   });
 
 export const gerarLegendaInstagram = createServerFn({ method: "POST" })
-  .inputValidator((d: { titulo: string; mensagem: string }) => d)
+  .inputValidator((d: { titulo: string; mensagem: string; fatos?: string; leu_materia?: boolean }) => d)
   .handler(async ({ data }) => {
     await (await import("./auth.server")).requireUnlocked();
     const titulo = data.titulo?.trim();
     const mensagem = data.mensagem?.trim();
+    const fatos = data.fatos?.trim();
     if (!titulo) throw new Error("Título vazio");
+
+    const avisoSemLeitura =
+      data.leu_materia === false
+        ? "\n\nATENÇÃO: a matéria original não pôde ser lida. A base factual abaixo é limitada. Não preencha lacunas com conhecimento próprio — se faltar dado concreto, escreva uma legenda mais curta e genérica e NÃO use título com promessa de revelação."
+        : "";
+
     const prompt = `Você é o redator da Devant Soluções Tributárias para Instagram, uma consultoria tributária que fala com donos de empresa de forma clara, acessível e de fácil entendimento, utilizando sempre metáforas, analogias e alusões para facilitar a compreensão da notícia. Escreva uma legenda profissional e informativa sobre a notícia abaixo. Regras obrigatórias:
 
 O público são empresários e donos de negócio. Eles não são da área tributária — explique termos técnicos de forma clara quando usar.
-Tom: informativo, direto e profissional, evitando ao máximo ser prolixo, excessivamente formal ou usar termos écnicos.
+Tom: informativo, direto e profissional, evitando ao máximo ser prolixo, excessivamente formal ou usar termos técnicos.
 Comece com uma frase que chame a atenção do empresário para o fator mais importante da notícia
 Use o formato: frase chamativa + parágrafo de abertura + tópicos com 🔹 destacando os pontos principais + parágrafo de fechamento + frase com reflexão ou pergunta ao leitor.
 Inclua emojis com moderação.
@@ -120,8 +120,26 @@ Nunca repita palavras ou frases que já estejam nos slides/imagens do post.
 Português brasileiro natural, sem tradução de inglês.
 ABSOLUTAMENTE PROIBIDO HASHTAGS DE MARCA OU COM O NOME DA EMPRESA, como #DEVANT, #DEVANTSOLUCOES ou variações.
 
-Notícia: ${titulo}
-Conteúdo: ${mensagem || ""}`;
+REGRAS DE FIDELIDADE AOS FATOS (prioridade máxima, acima de qualquer regra de estilo):
+Use APENAS os dados listados em BASE FACTUAL. Todo nome próprio, número, valor, data, prazo ou percentual que você escrever tem que estar lá.
+É PROIBIDO completar com conhecimento próprio, estimar, arredondar ou generalizar um dado que não esteja na BASE FACTUAL.
+Se a BASE FACTUAL não tem dado concreto sobre algum ponto, simplesmente não escreva sobre esse ponto.
+Os tópicos com 🔹 devem carregar os dados concretos — nomes, valores, datas, prazos. Tópico sem dado concreto não serve.
+
+REGRA DE PROMESSA DO TÍTULO:
+O título do post promete algo ao leitor. Se ele diz "veja quem são", "entenda o que muda", "saiba quanto", "descubra", "confira a lista" ou qualquer variação, a legenda TEM que entregar exatamente isso, com os dados da BASE FACTUAL.
+Exemplo: título "veja quem são as 10 mais ricas" exige que a legenda cite os nomes. Não vale falar sobre o tema em volta sem citar.
+Se a BASE FACTUAL não tiver o que o título promete, NÃO tente contornar escrevendo em volta. Nesse caso, escreva a legenda com o que existe e, ao final da resposta, acrescente numa última linha isolada:
+[AVISO: o título promete "..." mas os dados disponíveis não entregam isso — reescrever o título]${avisoSemLeitura}
+
+TÍTULO: ${titulo}
+
+BASE FACTUAL (a única fonte de dados permitida):
+${fatos || "(vazio — não há base factual disponível)"}
+
+REFERÊNCIA DE TOM (não é fonte de dados, serve só pra sentir o registro; ignore o link no final):
+${mensagem || ""}`;
+
     const raw = (await callGemini(prompt, 0.9)).trim();
     const legenda = raw.replace(/^["'`]+|["'`]+$/g, "").trim();
     if (!legenda) throw new Error("Resposta do Gemini vazia");
