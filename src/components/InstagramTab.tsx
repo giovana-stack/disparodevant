@@ -61,7 +61,7 @@ export function InstagramTab() {
 
   const previewRef = useRef<HTMLDivElement>(null);
 
-  const noticia = (noticiasQ.data ?? []).find((n: any) => String(n.id) === selecionada);
+  const noticia = ((noticiasQ.data ?? []) as any[]).find((n: any) => String(n.id) === selecionada) as any;
 
   function escolherNoticia(id: string) {
     setSelecionada(id);
