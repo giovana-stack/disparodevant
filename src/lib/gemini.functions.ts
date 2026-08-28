@@ -4,7 +4,11 @@ async function callGemini(prompt: string, temperature = 0.8, responseMimeType?: 
   const key = process.env.GEMINI_API_KEY;
   if (!key) throw new Error("GEMINI_API_KEY não configurada");
 
-  const models = ["gemini-flash-lite-latest", "gemini-3.5-flash-lite", "gemini-3.6-flash"];
+  const models = [
+    "gemini-flash-lite-latest",
+    "gemini-3.5-flash-lite",
+    "gemini-3.6-flash",
+  ];
 
   let lastError: Error | null = null;
 
@@ -102,10 +106,9 @@ export const gerarLegendaInstagram = createServerFn({ method: "POST" })
     const fatos = data.fatos?.trim();
     if (!titulo) throw new Error("Título vazio");
 
-    const avisoSemLeitura =
-      data.leu_materia === false
-        ? "\n\nATENÇÃO: a matéria original não pôde ser lida. A base factual abaixo é limitada. Não preencha lacunas com conhecimento próprio — se faltar dado concreto, escreva uma legenda mais curta e genérica e NÃO use título com promessa de revelação."
-        : "";
+    const avisoSemLeitura = data.leu_materia === false
+      ? "\n\nATENÇÃO: a matéria original não pôde ser lida. A base factual abaixo é limitada. Não preencha lacunas com conhecimento próprio — se faltar dado concreto, escreva uma legenda mais curta e genérica e NÃO use título com promessa de revelação."
+      : "";
 
     const prompt = `Você é o redator da Devant Soluções Tributárias para Instagram, uma consultoria tributária que fala com donos de empresa de forma clara, acessível e de fácil entendimento, utilizando sempre metáforas, analogias e alusões para facilitar a compreensão da notícia. Escreva uma legenda profissional e informativa sobre a notícia abaixo. Regras obrigatórias:
 
