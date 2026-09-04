@@ -41,9 +41,9 @@ export const buscarNovasNoticias = createServerFn({ method: "POST" }).handler(as
   const timeout = setTimeout(() => ctrl.abort(), 150000);
   try {
     console.log("Chamando Apps Script URL:", url);
-    const r = await fetch(url, { 
-      method: "POST", 
-      redirect: "follow", 
+    const r = await fetch(url, {
+      method: "POST",
+      redirect: "follow",
       signal: ctrl.signal,
       headers: {
         'Accept': 'application/json',
@@ -52,15 +52,15 @@ export const buscarNovasNoticias = createServerFn({ method: "POST" }).handler(as
     console.log("Apps Script Response status:", r.status);
     const text = await r.text();
     console.log("Apps Script Response body (first 500 chars):", text.slice(0, 500));
-    
+
     // Verificamos se o status é sucesso (200 ou redirecionamento bem-sucedido)
     if (!r.ok) throw new Error(`Falha ao buscar notícias: ${r.status}`);
-    
+
     // Apps Script às vezes retorna HTML de erro mesmo com status 200 se a função falhar internamente
     if (text.includes("Script function not found") || text.includes("Erro") || text.includes("Error")) {
-       if (text.length < 1000) { // Se for uma mensagem curta de erro
-         throw new Error(`Apps Script retornou erro: ${text}`);
-       }
+      if (text.length < 1000) { // Se for uma mensagem curta de erro
+        throw new Error(`Apps Script retornou erro: ${text}`);
+      }
     }
 
     return { ok: true as const };
@@ -75,12 +75,12 @@ export const buscarNovasNoticias = createServerFn({ method: "POST" }).handler(as
 export const listPendingNoticias = createServerFn({ method: "GET" }).handler(async () => {
   await (await import("./auth.server")).requireUnlocked();
   const s = await supa();
-  
+
   const { data: postedData } = await s
     .from("postagens_instagram")
     .select("rascunho_id, status")
     .not("rascunho_id", "is", null);
-  
+
   const postedDataArr = postedData ?? [];
   // Excluímos apenas os que já foram publicados (status 'publicado' ou 'publicar_agora')
   // Os agendados devem continuar aparecendo na lista de Notícias, mas com ícone.
@@ -104,7 +104,7 @@ export const listPendingNoticias = createServerFn({ method: "GET" }).handler(asy
 
   const { data, error } = await query.order("criado_em", { ascending: false });
   if (error) throw new Error(error.message);
-  
+
   return (data ?? []).map(r => ({
     ...r,
     is_scheduled: scheduledIds.includes(r.id)
@@ -155,13 +155,31 @@ export const discardNoticia = createServerFn({ method: "POST" })
   });
 
 export const dispararEnquete = createServerFn({ method: "POST" })
-  .inputValidator((d: { pergunta: string; opcoes: string[] }) => d)
+  .inputValidator((d: { pergunta: string; opcoes: string[]; agendadoPara?: string | null }) => d)
   .handler(async ({ data }) => {
     await (await import("./auth.server")).requireUnlocked();
     const pergunta = data.pergunta?.trim();
     const opcoes = (data.opcoes || []).map((o) => o.trim()).filter(Boolean);
     if (!pergunta) throw new Error("Pergunta obrigatória");
     if (opcoes.length < 2 || opcoes.length > 5) throw new Error("Entre 2 e 5 opções");
+
+    const quandoRaw = data.agendadoPara?.trim();
+    if (quandoRaw) {
+      const quando = new Date(quandoRaw);
+      if (Number.isNaN(quando.getTime())) throw new Error("Data de agendamento inválida");
+      const s = await supa();
+      const { error } = await s.from("rascunhos").insert({
+        titulo: pergunta,
+        mensagem: pergunta,
+        status: "agendado",
+        tipo: "enquete",
+        agendado_para: quando.toISOString(),
+        poll_opcoes: opcoes,
+      });
+      if (error) throw new Error(error.message);
+      return { ok: true as const, agendada: true as const };
+    }
+
     await uaPoll(pergunta, opcoes);
     const s = await supa();
     const { error } = await s.from("rascunhos").insert({
@@ -172,6 +190,71 @@ export const dispararEnquete = createServerFn({ method: "POST" })
       enviado_em: new Date().toISOString(),
       poll_opcoes: opcoes,
     });
+    if (error) throw new Error(error.message);
+    return { ok: true as const, agendada: false as const };
+  });
+
+export const listEnquetesAgendadas = createServerFn({ method: "GET" }).handler(async () => {
+  await (await import("./auth.server")).requireUnlocked();
+  const s = await supa();
+  const { data, error } = await s
+    .from("rascunhos")
+    .select("id, titulo, mensagem, poll_opcoes, agendado_para")
+    .eq("tipo", "enquete")
+    .eq("status", "agendado")
+    .order("agendado_para", { ascending: true });
+  if (error) throw new Error(error.message);
+  return data ?? [];
+});
+
+export const cancelarEnqueteAgendada = createServerFn({ method: "POST" })
+  .inputValidator((d: { id: string | number }) => d)
+  .handler(async ({ data }) => {
+    await (await import("./auth.server")).requireUnlocked();
+    const s = await supa();
+    const { error } = await s
+      .from("rascunhos")
+      .update({ status: "descartado" })
+      .eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true as const };
+  });
+
+export const atualizarDataEnquete = createServerFn({ method: "POST" })
+  .inputValidator((d: { id: string | number; novaData: string }) => d)
+  .handler(async ({ data }) => {
+    await (await import("./auth.server")).requireUnlocked();
+    const quando = new Date(data.novaData);
+    if (Number.isNaN(quando.getTime())) throw new Error("Data de agendamento inválida");
+    const s = await supa();
+    const { error } = await s
+      .from("rascunhos")
+      .update({ agendado_para: quando.toISOString() })
+      .eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true as const };
+  });
+
+export const dispararEnqueteAgora = createServerFn({ method: "POST" })
+  .inputValidator((d: { id: string | number }) => d)
+  .handler(async ({ data }) => {
+    await (await import("./auth.server")).requireUnlocked();
+    const s = await supa();
+    const { data: row, error: errSel } = await s
+      .from("rascunhos")
+      .select("id, titulo, poll_opcoes")
+      .eq("id", data.id)
+      .single();
+    if (errSel) throw new Error(errSel.message);
+    const pergunta = (row?.titulo || "").trim();
+    const opcoes = ((row?.poll_opcoes as string[]) || []).map((o) => String(o).trim()).filter(Boolean);
+    if (!pergunta) throw new Error("Pergunta vazia");
+    if (opcoes.length < 2 || opcoes.length > 5) throw new Error("Entre 2 e 5 opções");
+    await uaPoll(pergunta, opcoes);
+    const { error } = await s
+      .from("rascunhos")
+      .update({ status: "enviado", enviado_em: new Date().toISOString() })
+      .eq("id", data.id);
     if (error) throw new Error(error.message);
     return { ok: true as const };
   });
