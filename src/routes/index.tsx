@@ -60,10 +60,6 @@ import {
   dispararEnquete,
   dispararPost,
   buscarNovasNoticias,
-  listEnquetesAgendadas,
-  cancelarEnqueteAgendada,
-  atualizarDataEnquete,
-  dispararEnqueteAgora,
 } from "@/lib/rascunhos.functions";
 import { gerarEnquete, gerarChamadaPost } from "@/lib/gemini.functions";
 import { listPostagensPublicadas } from "@/lib/instagram.functions";
@@ -403,7 +399,6 @@ function EnqueteTab() {
 
   return (
     <div className="space-y-4">
-      <EnquetesAgendadas />
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-base flex items-center gap-2">
@@ -617,132 +612,6 @@ function PostTab() {
             </>
           )}
         </Button>
-      </CardContent>
-    </Card>
-  );
-}
-
-/* ---------------- ENQUETES AGENDADAS ---------------- */
-function toLocalInput(iso: string | null | undefined) {
-  if (!iso) return "";
-  const d = new Date(iso);
-  return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
-}
-
-function EnquetesAgendadas() {
-  const qc = useQueryClient();
-  const listFn = useServerFn(listEnquetesAgendadas);
-  const cancelarFn = useServerFn(cancelarEnqueteAgendada);
-  const atualizarFn = useServerFn(atualizarDataEnquete);
-  const agoraFn = useServerFn(dispararEnqueteAgora);
-
-  const [busyId, setBusyId] = useState<string | number | null>(null);
-  const [editando, setEditando] = useState<{ id: string | number; date: string } | null>(null);
-
-  const q = useQuery({ queryKey: ["enquetes-agendadas"], queryFn: () => listFn() });
-  const items = (q.data ?? []) as any[];
-  if (items.length === 0) return null;
-
-  async function run(id: string | number, fn: () => Promise<unknown>, msg: string) {
-    setBusyId(id);
-    try {
-      await fn();
-      toast.success(msg);
-      qc.invalidateQueries({ queryKey: ["enquetes-agendadas"] });
-      qc.invalidateQueries({ queryKey: ["enviados"] });
-    } catch (e) {
-      toast.error((e as Error).message);
-    } finally {
-      setBusyId(null);
-    }
-  }
-
-  return (
-    <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className="text-base flex items-center gap-2">
-          <CalendarDays className="w-4 h-4 text-primary" /> Enquetes agendadas
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-3">
-        {items.map((e) => (
-          <div key={String(e.id)} className="rounded-lg border p-3 space-y-2">
-            <div className="text-sm font-medium leading-snug">{e.titulo}</div>
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <Clock className="w-3.5 h-3.5 text-amber-500" />
-              {e.agendado_para
-                ? new Date(e.agendado_para).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })
-                : "Sem data"}
-            </div>
-            {editando?.id === e.id ? (
-              <div className="space-y-2">
-                <Input
-                  type="datetime-local"
-                  value={editando.date}
-                  onChange={(ev) => setEditando({ id: e.id, date: ev.target.value })}
-                />
-                <div className="flex gap-2">
-                  <Button size="sm" variant="outline" onClick={() => setEditando(null)}>
-                    Cancelar
-                  </Button>
-                  <Button
-                    size="sm"
-                    disabled={busyId === e.id || !editando.date}
-                    onClick={() =>
-                      run(
-                        e.id,
-                        async () => {
-                          await atualizarFn({
-                            data: { id: e.id, novaData: new Date(editando!.date).toISOString() },
-                          });
-                          setEditando(null);
-                        },
-                        "Data atualizada"
-                      )
-                    }
-                  >
-                    Salvar
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              <div className="grid grid-cols-3 gap-2">
-                <Button
-                  size="sm"
-                  className="text-[11px] h-8 px-2"
-                  disabled={busyId === e.id}
-                  onClick={() => run(e.id, () => agoraFn({ data: { id: e.id } }), "Enquete disparada!")}
-                >
-                  {busyId === e.id ? (
-                    <Loader2 className="w-3 h-3 animate-spin" />
-                  ) : (
-                    <>
-                      <Send className="w-3 h-3 mr-1" /> Agora
-                    </>
-                  )}
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="text-[11px] h-8 px-2"
-                  disabled={busyId === e.id}
-                  onClick={() => setEditando({ id: e.id, date: toLocalInput(e.agendado_para) })}
-                >
-                  <Clock className="w-3 h-3 mr-1" /> Mudar data
-                </Button>
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  className="text-[11px] h-8 px-2"
-                  disabled={busyId === e.id}
-                  onClick={() => run(e.id, () => cancelarFn({ data: { id: e.id } }), "Agendamento cancelado")}
-                >
-                  <X className="w-3 h-3 mr-1" /> Cancelar
-                </Button>
-              </div>
-            )}
-          </div>
-        ))}
       </CardContent>
     </Card>
   );
