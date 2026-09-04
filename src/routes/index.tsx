@@ -411,7 +411,7 @@ function EnqueteTab() {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
-          <Label>Baseada em um post publicado no Instagram</Label>
+          <Label>Baseada em um post do Instagram (publicado ou agendado)</Label>
           <Select value={selecionada} onValueChange={setSelecionada}>
             <SelectTrigger>
               <SelectValue placeholder="Selecione um post..." />
@@ -419,7 +419,7 @@ function EnqueteTab() {
             <SelectContent>
               {(noticiasQ.data ?? []).map((n) => (
                 <SelectItem key={String(n.id)} value={String(n.id)}>
-                  {(n.titulo || n.legenda || "").slice(0, 80)}
+                  {(n.status === "agendado" ? "⏱ " : "") + (n.titulo || n.legenda || "").slice(0, 80)}
                 </SelectItem>
               ))}
             </SelectContent>
