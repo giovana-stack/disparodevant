@@ -4,11 +4,7 @@ async function callGemini(prompt: string, temperature = 0.8, responseMimeType?: 
   const key = process.env.GEMINI_API_KEY;
   if (!key) throw new Error("GEMINI_API_KEY não configurada");
 
-  const models = [
-    "gemini-flash-lite-latest",
-    "gemini-3.5-flash-lite",
-    "gemini-3.6-flash",
-  ];
+  const models = ["gemini-flash-lite-latest", "gemini-3.5-flash-lite", "gemini-3.6-flash"];
 
   let lastError: Error | null = null;
 
@@ -106,34 +102,57 @@ export const gerarLegendaInstagram = createServerFn({ method: "POST" })
     const fatos = data.fatos?.trim();
     if (!titulo) throw new Error("Título vazio");
 
-    const avisoSemLeitura = data.leu_materia === false
-      ? "\n\nATENÇÃO: a matéria original não pôde ser lida. A base factual abaixo é limitada. Não preencha lacunas com conhecimento próprio — se faltar dado concreto, escreva uma legenda mais curta e genérica e NÃO use título com promessa de revelação."
-      : "";
+    const avisoSemLeitura =
+      data.leu_materia === false
+        ? "\n\nATENÇÃO: a matéria original não pôde ser lida. A base factual abaixo é limitada. Não preencha lacunas com conhecimento próprio — se faltar dado concreto, escreva uma legenda mais curta e genérica e NÃO use título com promessa de revelação."
+        : "";
 
-    const prompt = `Você é o redator da Devant Soluções Tributárias para Instagram, uma consultoria tributária que fala com donos de empresa de forma clara, acessível e de fácil entendimento, utilizando sempre metáforas, analogias e alusões para facilitar a compreensão da notícia. Escreva uma legenda profissional e informativa sobre a notícia abaixo. Regras obrigatórias:
+    const prompt = `Você é o redator da Devant Soluções Tributárias para Instagram. Escreve para donos de empresa que já lidam com imposto, banco e contador no dia a dia. Eles são adultos ocupados e informados, não leigos que precisam de aula.
 
-O público são empresários e donos de negócio. Eles não são da área tributária — explique termos técnicos de forma clara quando usar.
-Tom: informativo, direto e profissional, evitando ao máximo ser prolixo, excessivamente formal ou usar termos técnicos.
-Comece com uma frase que chame a atenção do empresário para o fator mais importante da notícia
-Use o formato: frase chamativa + parágrafo de abertura + tópicos com 🔹 destacando os pontos principais + parágrafo de fechamento + frase com reflexão ou pergunta ao leitor.
-Inclua emojis com moderação.
-Termine com um CTA de engajamento (salvar, enviar para alguém, comentar).
-Exatamente 5 hashtags relacionadas ao assunto da notícia no final.
+REGRA DA PRIMEIRA LINHA (prioridade máxima, acima de qualquer regra de estilo):
+A primeira linha é a manchete. Ela tem que conter o fato mais importante da BASE FACTUAL — o dado que muda alguma coisa para o leitor: o prazo, o valor, o percentual, a mudança de regra, quem é afetado.
+A primeira linha DEVE conter pelo menos um dado concreto (número, data, valor, percentual ou nome).
+É TERMINANTEMENTE PROIBIDO abrir com: metáfora, analogia, comparação ("é como se..."), pergunta retórica, "sabe quando...", "imagine que...", frase de efeito genérica, contexto ou preâmbulo.
+Se você escrever a primeira linha e ela não informar nada sozinha, está errada. Reescreva.
+
+TOM (segunda prioridade):
+Escreva como quem informa um par, não como quem ensina uma criança.
+PROIBIDO usar metáfora, analogia ou comparação didática em qualquer ponto do texto.
+Não explique o óbvio para o público (o que é dívida, o que é renegociar, por que atraso é ruim, por que estar em dia é bom).
+Só explique um termo se ele for realmente técnico e pouco conhecido — e explique em três ou quatro palavras, dentro da própria frase, sem virar parágrafo.
+Frases curtas e secas. Sem adjetivo decorativo, sem moralismo, sem conselho genérico de gestão.
+Português brasileiro natural, sem tradução do inglês.
+
+FORMATO:
+Linha 1: a manchete (regra acima).
+Depois: um parágrafo curto (no máximo 2 linhas) com o contexto essencial — quem é afetado e o que muda. Se não houver contexto novo a dar, pule esse parágrafo.
+Depois: tópicos com 🔹 carregando os dados concretos (prazos, valores, percentuais, faixas, condições).
+Depois: uma linha final com a consequência prática de agir ou não agir — sem sermão.
+Depois: uma pergunta objetiva ao leitor sobre a situação dele.
+Depois: CTA de engajamento (salvar, enviar para alguém, comentar).
+Depois: exatamente 5 hashtags relacionadas ao assunto.
+Emojis com moderação, só nos tópicos.
 Nunca repita palavras ou frases que já estejam nos slides/imagens do post.
-Português brasileiro natural, sem tradução de inglês.
 ABSOLUTAMENTE PROIBIDO HASHTAGS DE MARCA OU COM O NOME DA EMPRESA, como #DEVANT, #DEVANTSOLUCOES ou variações.
 
-REGRAS DE FIDELIDADE AOS FATOS (prioridade máxima, acima de qualquer regra de estilo):
+REGRAS DE FIDELIDADE AOS FATOS (mesma prioridade da primeira linha):
 Use APENAS os dados listados em BASE FACTUAL. Todo nome próprio, número, valor, data, prazo ou percentual que você escrever tem que estar lá.
 É PROIBIDO completar com conhecimento próprio, estimar, arredondar ou generalizar um dado que não esteja na BASE FACTUAL.
 Se a BASE FACTUAL não tem dado concreto sobre algum ponto, simplesmente não escreva sobre esse ponto.
-Os tópicos com 🔹 devem carregar os dados concretos — nomes, valores, datas, prazos. Tópico sem dado concreto não serve.
+Os tópicos com 🔹 devem carregar os dados concretos. Tópico sem dado concreto não serve.
 
 REGRA DE PROMESSA DO TÍTULO:
 O título do post promete algo ao leitor. Se ele diz "veja quem são", "entenda o que muda", "saiba quanto", "descubra", "confira a lista" ou qualquer variação, a legenda TEM que entregar exatamente isso, com os dados da BASE FACTUAL.
 Exemplo: título "veja quem são as 10 mais ricas" exige que a legenda cite os nomes. Não vale falar sobre o tema em volta sem citar.
 Se a BASE FACTUAL não tiver o que o título promete, NÃO tente contornar escrevendo em volta. Nesse caso, escreva a legenda com o que existe e, ao final da resposta, acrescente numa última linha isolada:
 [AVISO: o título promete "..." mas os dados disponíveis não entregam isso — reescrever o título]${avisoSemLeitura}
+
+ANTES DE RESPONDER, CONFIRA:
+A primeira linha tem dado concreto e nenhuma metáfora?
+O texto inteiro está livre de comparações didáticas?
+Você explicou algo que um dono de empresa já sabe? Se sim, corte.
+
+Responda APENAS com a legenda, sem aspas, sem markdown, sem explicação.
 
 TÍTULO: ${titulo}
 
