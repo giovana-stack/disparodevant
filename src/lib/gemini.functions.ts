@@ -190,7 +190,7 @@ Termine exatamente com: Leia mais no nosso Instagram 👇
 Título: ${titulo}
 Post: ${legenda || ""}`;
 
-    const raw = (await callGemini(prompt, 0.8)).trim();
+    const raw = (await callGemini(prompt, 0.5)).trim();
     const resumo = raw.replace(/^["'`]+|["'`]+$/g, "").trim();
     if (!resumo) throw new Error("Resposta do Gemini vazia");
     return { resumo };
