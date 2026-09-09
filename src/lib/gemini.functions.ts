@@ -176,7 +176,16 @@ export const gerarResumoWhatsApp = createServerFn({ method: "POST" })
     const legenda = data.legenda?.trim();
     if (!titulo) throw new Error("Título vazio");
 
-    const prompt = `Resuma o post abaixo em no máximo 5 linhas curtas para WhatsApp. Linguagem simples, tom de conversa. Sem hashtags. Sem link da notícia. Sem CTA de seguir a página. Termine com: Leia mais no nosso Instagram 👇. Use emojis com moderação.
+    const prompt = `Resuma o post abaixo para um grupo de WhatsApp de donos de empresa.
+
+Regras:
+Máximo 4 linhas curtas.
+A primeira linha tem que trazer o fato mais importante com dado concreto (prazo, valor, percentual, mudança de regra). Nada de metáfora, analogia, comparação, aspas de efeito ou pergunta retórica.
+No máximo 1 emoji no texto inteiro, e só se ele acrescentar alguma coisa. Zero emoji no fim das linhas.
+Tom seco e direto, de quem avisa um colega. Sem adjetivo decorativo, sem conselho genérico, sem explicar o óbvio.
+Só use dados que estão no post abaixo. Não invente, não arredonde, não complete.
+Sem hashtags. Sem link. Sem CTA de seguir a página.
+Termine exatamente com: Leia mais no nosso Instagram 👇
 
 Título: ${titulo}
 Post: ${legenda || ""}`;
