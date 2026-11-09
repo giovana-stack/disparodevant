@@ -173,6 +173,17 @@ export function InstagramTab() {
         if (noticia?.id) {
           await marcarEnviadoFn({ data: { id: noticia.id } });
         }
+        await salvarFn({
+          data: {
+            titulo: titulo.trim(),
+            imagem_url: url,
+            legenda: legenda.trim(),
+            resumo_whats: resumo.trim(),
+            agendado_para: new Date().toISOString(),
+            status: "publicado",
+            rascunho_id: noticia?.id ?? null,
+          },
+        });
       } else {
         await salvarFn({
           data: {
@@ -189,6 +200,7 @@ export function InstagramTab() {
       toast.success(modo === "agora" ? "Post publicado com sucesso!" : "Postagem agendada!");
       qc.invalidateQueries({ queryKey: ["postagens-instagram"] });
       qc.invalidateQueries({ queryKey: ["noticias-selecionaveis"] });
+      qc.invalidateQueries({ queryKey: ["postagens-publicadas"] });
       limpar();
     } catch (e) {
       toast.error((e as Error).message || "Falha ao publicar");
