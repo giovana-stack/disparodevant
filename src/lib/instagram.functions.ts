@@ -41,7 +41,7 @@ export const salvarPostagemInstagram = createServerFn({ method: "POST" })
       legenda: string;
       resumo_whats?: string;
       agendado_para: string;
-      status: "agendado" | "publicar_agora";
+      status: "agendado" | "publicar_agora" | "publicado";
       rascunho_id?: string | number | null;
     }) => d,
   )
