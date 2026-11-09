@@ -29,9 +29,7 @@ const VERDE_ESCURO = "#192A25";
 const VERDE_TAG = "#2ABFBF";
 const OVERLAY_COR = "rgba(25, 42, 37, 0.75)";
 
-
-
-
+const LIMITE_LEGENDA = 2200;
 
 export function InstagramTab() {
   const qc = useQueryClient();
@@ -161,6 +159,10 @@ export function InstagramTab() {
     }
     if (!legenda.trim()) {
       toast.error("Gere ou escreva a legenda");
+      return;
+    }
+    if (legenda.trim().length > LIMITE_LEGENDA) {
+      toast.error(`A legenda passou do limite do Instagram (${legenda.trim().length.toLocaleString("pt-BR")} de ${LIMITE_LEGENDA.toLocaleString("pt-BR")} caracteres)`);
       return;
     }
     setSalvando(modo);
@@ -432,7 +434,20 @@ export function InstagramTab() {
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="ig-legenda">Legenda do Instagram</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="ig-legenda">Legenda do Instagram</Label>
+                <span
+                  className={`text-xs tabular-nums ${
+                    legenda.trim().length > LIMITE_LEGENDA
+                      ? "text-red-600 font-semibold"
+                      : legenda.trim().length > LIMITE_LEGENDA - 200
+                        ? "text-amber-600"
+                        : "text-muted-foreground"
+                  }`}
+                >
+                  {legenda.trim().length.toLocaleString("pt-BR")} / {LIMITE_LEGENDA.toLocaleString("pt-BR")}
+                </span>
+              </div>
               <Textarea
                 id="ig-legenda"
                 rows={7}
