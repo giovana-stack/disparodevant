@@ -201,7 +201,8 @@ export const listPostagensPublicadas = createServerFn({ method: "GET" }).handler
     .from("postagens_instagram")
     .select("id, titulo, legenda, agendado_para, status")
     .in("status", ["publicado", "publicar_agora", "agendado"])
-    .order("agendado_para", { ascending: false });
+    .gte("agendado_para", new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString())
+    .order("agendado_para", { ascending: false, nullsFirst: false });
   if (error) throw new Error(error.message);
   return (data ?? []) as Array<{
     id: string | number;
